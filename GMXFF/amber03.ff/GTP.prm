@@ -1,0 +1,23 @@
+[ atomtypes ]
+; name      at.num  mass     charge ptype  sigma      epsilon
+O3           8      16.00    0.0000  A   2.95992e-01  8.78640e-01 ;; copied from O2, per Meagher et al. 2002. J. Comp. Chem. 
+ 
+[ bondtypes ] 
+; i    j  func       b0          kb
+ O3    P     1    0.14800   439320.0 ; by analogy to O2
+
+[ angletypes ] 
+;i     j    k  func       theta0       ktheta          ub0          kub
+ O3    P    O3    1       119.900      1171.520 ; by analogy to O2 
+ O3    P    OS    1       108.230      836.800  ; by analogy to O2 
+ P     OS   P     1       150.00       106.148  ;; Meagher et al. J. Comp. Chem. 2003, via tleap and acpype. 
+
+[ dihedraltypes ] ;; propers 
+;i     j     k    l    func   phi0     kphi        mult
+H1    CT    OS    P    9      0.000    0.14644     3 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.  
+CT    OS     P   OS    9      0.000   -6.52704     1 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.  
+CT    OS     P   O2    9      0.000    2.46647     3 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.  
+CT    OS     P   O2    9      0.000   -1.69870     2 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.  
+ P    OS     P   OS    9      0.000    3.75305     1 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.  
+ P    OS     P   O2    9      0.000   -1.48323     2 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.   
+ P    OS     P   O3    9      0.000   -0.35564     3 ;; Meagher et al. J. Comp. Chem. 2003., via tleap and acpype.  
