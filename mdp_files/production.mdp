@@ -2,7 +2,7 @@
 integrator              = sd                    ; sd integrator
 tinit                   = 0                     ; [ps] starting time for run
 dt                      = 0.002                 ; [ps] time step for integration
-nsteps                  = 25000000   ; 50 ns     ; maximum number of steps to integrate 
+nsteps                  = 1000000     ; 2  ns     ; maximum number of steps to integrate 
 comm_mode               = Linear                ; remove center of mass translation
 nstcomm                 = 1                     ; [steps] frequency of mass motion removal
 comm_grps               = Protein Non-Protein   ; group(s) for center of mass motion removal
