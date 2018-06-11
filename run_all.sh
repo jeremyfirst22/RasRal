@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#molecList="C D E F H I K L M N Q R S T V W Y" 
-molecList="Q"
+molecList="D E F H I K L M N Q R S T V W Y" 
 
 for mut in $molecList ; do 
     molec=RasRalC18CNC_Q61$mut
@@ -31,7 +30,7 @@ for mut in $molecList ; do
     echo >> submit_Q61$mut
     echo "bash run_RasRal_Umbrella.sh StartingStructures/${molec}.pdb" >> submit_Q61$mut
    
-    sbatch submit_$molec
+    sbatch submit_Q61$mut
     #bash run_RasRal_Umbrella.sh StartingStructures/$molec.pdb
 
 
