@@ -275,7 +275,7 @@ prep_angle(){
         cp ../Prep/Solvent_npt/neutral.top $window/. 
         cd $window 
 
-        create_restraint solvent_npt.gro $window 500 0 
+        create_restraint solvent_npt.gro $window 100 0 
 
         awk '/Include Position restraint file/{
             print "\n"; 
