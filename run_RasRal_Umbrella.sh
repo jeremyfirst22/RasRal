@@ -457,6 +457,7 @@ chi1(){
         gmx angle -f ../../Production/$window/$MOLEC.$window.xtc \
             -n dihedral.ndx \
             -type dihedral \
+            -od angdist.$window.xvg \
             -ov angaver.$window.xvg >> $logFile 2>> $errFile 
         check angaver.$window.xvg
 
