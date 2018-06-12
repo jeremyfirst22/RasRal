@@ -30,8 +30,8 @@ for mut in $molecList ; do
     echo >> submit_Q61$mut
     echo "bash run_RasRal_Umbrella.sh StartingStructures/${molec}.pdb" >> submit_Q61$mut
    
-    sbatch submit_Q61$mut
-    #bash run_RasRal_Umbrella.sh StartingStructures/$molec.pdb
+    #sbatch submit_Q61$mut
+    bash run_RasRal_Umbrella.sh StartingStructures/$molec.pdb
 
 
     done 
