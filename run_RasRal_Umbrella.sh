@@ -1,5 +1,7 @@
 #!/bin/bash
 angBinDist=30
+Q61=165
+
 
 usage(){
     echo "USAGE: $0 <PDB file {molec.pdb} >"  
@@ -100,6 +102,18 @@ production_windows(){
     done 
     cd ../
 }
+
+analysis_windows(){
+    printf "\t\tAnalysis: \n" 
+    create_dir Analysis
+    cd Analysis ; clean 
+    for angle in `seq 0 $angBinDist 359` ; do 
+    printf "\t\t\t%3i :\n" $angle
+        sasa $angle
+        chi1 $angle 
+    done
+    cd ../
+} 
 
 protein_steep(){
     printf "\t\tProtein steep............................." 
@@ -317,8 +331,6 @@ create_restraint(){
         exit 
     fi 
 
-    Q61=165
-
     sFile=$1
     r1=$2
     kfac=$3
@@ -365,7 +377,7 @@ production_run(){
     window=$1
 
     printf "\t\t\t%3i..............................." $window
-    if [ ! -f $window/$MOLEC.$window.run_$run.gro ] ; then
+    if [ ! -f $window/$MOLEC.$window.gro ] ; then
         create_dir $angle 
         cp ../Prep_windows/$window/$MOLEC.$window.gro $window/equilibrated_starting.$window.gro
         cp ../Prep_windows/$window/$MOLEC.$window.top $window/. 
@@ -391,7 +403,7 @@ production_run(){
                 ibrun mdrun_mpi -deffnm $MOLEC.$window >> $logFile 2>> $errFile 
                 fi 
             fi 
-        #check $MOLEC.$window.gro 
+        check $MOLEC.$window.gro 
 
         clean
         printf "Success\n" 
@@ -401,11 +413,92 @@ production_run(){
         fi  
 } 
 
+sasa(){ 
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "SASA"
+    if [ ! -f sasa/area.$window.xvg ]  ; then 
+        create_dir sasa
+        cd sasa
+
+        gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+            -s ../../Production/$window/$MOLEC.$window.tpr \
+            -surface 'Protein' \
+            -output "resindex $Q61" \
+            -ndots 240 \
+            -o area.$window.xvg >> $logFile 2>> $errFile 
+
+        check area.$window.xvg 
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+chi1(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "Chi 1" 
+    if [ ! -f chi1/endFile_$window.xvg ]  ; then 
+        create_dir chi1 
+        cp ../Production/$window/dihedral.ndx chi1/. 
+        cd chi1
+
+        gmx angle -f ../../Production/$window/$MOLEC.$window.xtc \
+            -n dihedral.ndx \
+            -type dihedral \
+            -ov angaver.$window.xvg >> $logFile 2>> $errFile 
+        check angaver.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+template(){
+    ##Call from analysis_windows()
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "Template" 
+    if [ ! -f template/endFile.$window.xvg ]  ; then 
+        create_dir template
+        cd template
+
+        #analysis function that produces endFile
+
+        check endFile.$window.xvg
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+
 printf "\n\t\t*** Program Beginning ***\n\n" 
 cd $MOLEC
 prep
 prep_windows
 production_windows
+analysis_windows
 cd ../
 
 printf "\n\n\t\t*** Program Ending    ***\n\n" 
