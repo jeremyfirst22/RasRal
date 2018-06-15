@@ -1,0 +1,20 @@
+##Data copied from Table 2 from Stafford et al. Biochemistry. 2012
+#Mutation  Mean freq.  Exp. Error
+Q61Q       2162.8       0.2
+Q61D       2162.0       0.1 
+Q61R       2162.4       0.1 
+Q61N       2162.7       0.2 
+Q61E       2162.8       0.2
+Q61K       2163.1       0.3 
+Q61Y       2163.5       0.1 
+Q61H       2163.8       0.2 
+Q61W       2164.1       0.2 
+Q61S       2164.4       0.1 
+Q61T       2164.7       0.2 
+Q61A       2162.0       0.2 
+Q61M       2162.6       0.1 
+Q61F       2163.0       0.2 
+Q61G       2163.1       0.1 
+Q61L       2163.2       0.2 
+Q61V       2163.9       0.1 
+Q61I       2164.0       0.2 
