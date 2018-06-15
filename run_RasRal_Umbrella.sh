@@ -1,6 +1,7 @@
 #!/bin/bash
 angBinDist=30
 Q61=165
+FORCE_TOOLS=/Users/jfirst/force_calc_tools
 
 
 usage(){
@@ -110,8 +111,12 @@ analysis_windows(){
     for angle in `seq 0 $angBinDist 359` ; do 
     printf "\t\t\t%3i :\n" $angle
         sasa $angle
+        polar_sasa $angle 
         chi1 $angle 
+        nopbc $angle
     done
+    wham
+    boltzmann_weight
     cd ../
 } 
 
@@ -421,18 +426,127 @@ sasa(){
     window=$1
 
     printf "\t\t\t%10s........................" "SASA"
-    if [ ! -f sasa/area.$window.xvg ]  ; then 
+    if [[ ! -f sasa/area.$window.xvg || ! -f sasa/sidechain.$window.xvg ]]  ; then 
         create_dir sasa
         cd sasa
 
-        gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
-            -s ../../Production/$window/$MOLEC.$window.tpr \
-            -surface 'Protein' \
-            -output "resindex $Q61" \
-            -ndots 240 \
-            -o area.$window.xvg >> $logFile 2>> $errFile 
-
+        if [ ! -f area.$window.xvg ] ; then 
+            gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                -s ../../Production/$window/$MOLEC.$window.tpr \
+                -surface 'Protein' \
+                -output "resindex $Q61" \
+                -ndots 240 \
+                -o area.$window.xvg >> $logFile 2>> $errFile 
+        fi 
         check area.$window.xvg 
+
+        if [ ! -f sidechain.$window.xvg ] ; then 
+            gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                -s ../../Production/$window/$MOLEC.$window.tpr \
+                -surface 'Protein' \
+                -output "group Sidechain and resindex $Q61" \
+                -ndots 240 \
+                -o sidechain.$window.xvg >> $logFile 2>> $errFile 
+        fi
+        check sidechain.$window.xvg 
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+polar_sasa(){ 
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    sideChainPolar=true
+    case "${MOLEC: -1}" in 
+        D) 
+            polarAtoms="resindex $Q61 and name OD1 OD2" 
+          ;; 
+        E) 
+            polarAtoms="resindex $Q61 and name OE1 OE2" 
+          ;; 
+        H)  ##Q61H was assigned rtp HIE entry, so we need those atoms
+            polarAtoms="resindex $Q61 and name ND1 NE2 HE2"
+          ;; 
+        K) 
+            polarAtoms="resindex $Q61 and name NZ HZ1 HZ2 HZ3"
+          ;; 
+        N) 
+            polarAtoms="resindex $Q61 and name OD1 ND2 HD21 HD22"
+          ;; 
+        Q) 
+            polarAtoms="resindex $Q61 and name OE1 NE2 HE21 HE22"
+          ;; 
+        R) 
+            polarAtoms="resindex $Q61 and name NE NH1 NH2 HH11 HH12 HH21 HH22 HE"
+          ;;
+        S) 
+            polarAtoms="resindex $Q61 and name OG HG" 
+          ;; 
+        T) 
+            polarAtoms="resindex $Q61 and name OG1 HG1"
+          ;; 
+        W) 
+            polarAtoms="resindex $Q61 and name NE1 HE1" 
+          ;; 
+        Y) 
+            polarAtoms="resindex $Q61 and name OH HH" 
+          ;; 
+        *) 
+            sideChainPolar=false
+            polarAtoms="resindex $Q61 and name"
+          ;; 
+    esac 
+
+    printf "\t\t\t%10s........................" "Polar SASA"
+    if [ ! -f polar_sasa/polar.$window.xvg ]  ; then 
+        create_dir polar_sasa
+        cd polar_sasa
+
+        if [ $sideChainPolar = true ] ; then 
+            if [ ! -f sc_polar.$window.xvg ] ; then 
+                gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                    -s ../../Production/$window/$MOLEC.$window.tpr \
+                    -surface 'Protein' \
+                    -output "$polarAtoms" \
+                    -ndots 240 \
+                    -o sc_polar.$window.xvg >> $logFile 2>> $errFile 
+            fi 
+            check sc_polar.$window.xvg 
+
+            if [ ! -f davids.$window.xvg ] ; then 
+                gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                    -select "$polarAtoms" \
+                    -on selection.$window.ndx >> $logFile 2>> $errFile 
+                check selection.$window.ndx 
+
+                echo '0' | gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                    -s ../../Production/$window/$MOLEC.$window.tpr \
+                    -n selection.$window.ndx \
+                    -o davids.$window.xvg >> $logFile 2>> $errFile 
+                check davids.$window.xvg 
+            fi 
+        fi 
+
+        polarAtoms=$polarAtoms" N H O"   ##Append three backbone polar atoms
+        if [ ! -f polar.$window.xvg ] ; then 
+            gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                -s ../../Production/$window/$MOLEC.$window.tpr \
+                -surface 'Protein' \
+                -output "$polarAtoms" \
+                -ndots 240 \
+                -o polar.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check polar.$window.xvg 
+
         clean 
         printf "Success\n" 
         cd ../
@@ -449,14 +563,16 @@ chi1(){
     window=$1
 
     printf "\t\t\t%10s........................" "Chi 1" 
-    if [ ! -f chi1/endFile_$window.xvg ]  ; then 
+    if [ ! -f chi1/angaver.$window.xvg ]  ; then 
         create_dir chi1 
         cp ../Production/$window/dihedral.ndx chi1/. 
         cd chi1
 
+        ##XVG none required for WHAM analysis (easier than cleaning each file) 
         gmx angle -f ../../Production/$window/$MOLEC.$window.xtc \
             -n dihedral.ndx \
             -type dihedral \
+            -xvg none \
             -od angdist.$window.xvg \
             -ov angaver.$window.xvg >> $logFile 2>> $errFile 
         check angaver.$window.xvg
@@ -467,6 +583,198 @@ chi1(){
     else 
         printf "Skipped\n"
         fi 
+}
+
+nopbc(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "No pbc" 
+    if [ ! -f nopbc/nopbc.$window.xtc ]  ; then 
+        create_dir nopbc
+        cd nopbc
+
+        echo 'Protein System' | gmx trjconv -f ../../Production/$window/equilibrated_starting.$window.gro \
+            -s ../../Production/$window/$MOLEC.$window.tpr \
+            -center \
+            -pbc mol \
+            -ur compact \
+            -o nopbc.$window.gro >> $logFile 2>> $errFile 
+        check nopbc.$window.gro 
+
+        echo 'Protein System' | gmx trjconv -f ../../Production/$window/$MOLEC.$window.xtc \
+            -s ../../Production/$window/$MOLEC.$window.tpr \
+            -center \
+            -pbc mol \
+            -ur compact \
+            -o nopbc.$window.xtc >> $logFile 2>> $errFile 
+        check nopbc.$window.xtc 
+            
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+wham(){
+    printf "\t\t\t%-4s.............................." "WHAM" 
+    if [[ ! -f wham/$MOLEC.output.prob && -f ~/wham/wham-1.0/WHAM ]]  ; then 
+        create_dir wham
+        cd wham ; clean 
+
+        i='0' 
+        if [ -f $MOLEC.wham.inp ] ; then rm $MOLEC.wham.inp ; fi 
+        touch $MOLEC.wham.inp 
+
+        for window in `seq 0 $angBinDist 359` ; do 
+            ##    index      fileName       center dphi kfac Temp 
+            echo "$i ../chi1/angaver.$window.xvg $window 15 70 300" >> $MOLEC.wham.inp  
+            ((i++)) 
+        done 
+
+        ~/wham/wham-1.0/WHAM --f $MOLEC.wham.inp --o $MOLEC.output --b 1 >> $logFile 2>> $errFile 
+
+        check $MOLEC.output.prob 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+boltzmann_weight(){
+    printf "\t\t\t%-16s.................." "Boltzmann weight"
+    if [[ ! -f boltzmann/angaver.weighted.out \
+        || ! -f boltzmann/area.weighted.out \
+        || ! -f boltzmann/sidechain.weighted.out ]] \
+        || [[ ! -f boltzmann/sc_polar.weighted.out && -f polar_sasa/sc_polar.330.xvg ]] \
+        || [[ ! -f boltzmann/davids.weighted.out && -f polar_sasa/davids.330.xvg ]] \
+        || [[ ! -f boltzmann/polar.weighted.out && -f polar_sasa/polar.330.xvg ]] \
+        && [ -f $FORCE_TOOLS/boltzmann_weight ]  ; then 
+        create_dir boltzmann
+        cd boltzmann ; clean 
+
+        if [ ! -f angaver.weighted.out ] ; then 
+            if [ -f angaver.boltzmann.inp ] ; then rm angaver.boltzmann.inp ; fi 
+
+            i=0
+            touch angaver.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                echo "../WHAM/$MOLEC.output.$i.bin   ../chi1/angaver.$window.xvg" >> angaver.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l angaver.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o angaver.weighted.out >> $logFile 2>> $errFile 
+        fi 
+        check angaver.weighted.out 
+
+        if [ ! -f area.weighted.out ] ; then 
+            if [ -f area.boltzmann.inp ] ; then rm area.boltzmann.inp ; fi 
+
+            i=0
+            touch area.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../sasa/area.$window.xvg area.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   area.$window.xvg" >> area.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l area.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o area.weighted.out >> $logFile 2>> $errFile 
+        fi 
+        check area.weighted.out 
+
+        if [ ! -f sidechain.weighted.out ] ; then 
+            if [ -f sidechain.boltzmann.inp ] ; then rm sidechain.boltzmann.inp ; fi 
+
+            i=0
+            touch sidechain.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../sasa/sidechain.$window.xvg sidechain.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   sidechain.$window.xvg" >> sidechain.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l sidechain.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o sidechain.weighted.out >> $logFile 2>> $errFile 
+        fi 
+        check sidechain.weighted.out 
+
+        if [[ ! -f sc_polar.weighted.out && -f ../polar_sasa/sc_polar.$window.xvg ]] ; then 
+            if [ -f sc_polar.boltzmann.inp ] ; then rm sc_polar.boltzmann.inp ; fi 
+
+            i=0
+            touch sc_polar.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../polar_sasa/sc_polar.$window.xvg sc_polar.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   sc_polar.$window.xvg" >> sc_polar.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l sc_polar.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o sc_polar.weighted.out >> $logFile 2>> $errFile 
+            check sc_polar.weighted.out 
+        fi 
+
+        if [[ ! -f davids.weighted.out && -f ../polar_sasa/davids.$window.xvg ]] ; then 
+            if [ -f davids.boltzmann.inp ] ; then rm davids.boltzmann.inp ; fi 
+
+            i=0
+            touch davids.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../polar_sasa/davids.$window.xvg davids.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   davids.$window.xvg" >> davids.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l davids.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o davids.weighted.out >> $logFile 2>> $errFile 
+            check davids.weighted.out 
+        fi 
+
+        if [[ ! -f polar.weighted.out && -f ../polar_sasa/polar.$window.xvg ]] ; then 
+            if [ -f polar.boltzmann.inp ] ; then rm polar.boltzmann.inp ; fi 
+
+            i=0
+            touch polar.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../polar_sasa/polar.$window.xvg polar.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   polar.$window.xvg" >> polar.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l polar.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o polar.weighted.out >> $logFile 2>> $errFile 
+            check polar.weighted.out 
+        fi 
+
+        #check endFile.$window.xvg
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+clean_xvg(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: clean_xvg < target file > < new cleaned file> "
+    fi 
+    cat $1 | grep -v "^@" | grep -v "^#" > $2 
 }
 
 template(){
