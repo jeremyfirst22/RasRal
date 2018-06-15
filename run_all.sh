@@ -12,23 +12,23 @@ for mut in $molecList ; do
     printf "\n\n\t\t*** $molec ***\n\n" 
 
 
-    echo "#!/bin/bash" > submit_Q61$mut
-    echo >> submit_Q61$mut
-    echo "#SBATCH -J Q61$mut " >> submit_Q61$mut
-    echo "#SBATCH -o Q61$mut.o%j" >> submit_Q61$mut
-    echo "#SBATCH -N 1" >> submit_Q61$mut
-    echo "#SBATCH -n 16 " >> submit_Q61$mut
-    echo "#SBATCH -p skx-normal " >> submit_Q61$mut
-    echo "#SBATCH -t 48:00:00" >> submit_Q61$mut
-    echo "#SBATCH -A Ras" >> submit_Q61$mut
-    echo "#SBATCH --mail-user=jeremy_first@utexas.edu" >> submit_Q61$mut
-    echo "#SBATCH --mail-type=all" >> submit_Q61$mut
-    
-    echo >> submit_Q61$mut
-    echo "module load gromacs " >> submit_Q61$mut 
-   
-    echo >> submit_Q61$mut
-    echo "bash run_RasRal_Umbrella.sh StartingStructures/${molec}.pdb" >> submit_Q61$mut
+#    echo "#!/bin/bash" > submit_Q61$mut
+#    echo >> submit_Q61$mut
+#    echo "#SBATCH -J Q61$mut " >> submit_Q61$mut
+#    echo "#SBATCH -o Q61$mut.o%j" >> submit_Q61$mut
+#    echo "#SBATCH -N 1" >> submit_Q61$mut
+#    echo "#SBATCH -n 16 " >> submit_Q61$mut
+#    echo "#SBATCH -p skx-normal " >> submit_Q61$mut
+#    echo "#SBATCH -t 48:00:00" >> submit_Q61$mut
+#    echo "#SBATCH -A Ras" >> submit_Q61$mut
+#    echo "#SBATCH --mail-user=jeremy_first@utexas.edu" >> submit_Q61$mut
+#    echo "#SBATCH --mail-type=all" >> submit_Q61$mut
+#    
+#    echo >> submit_Q61$mut
+#    echo "module load gromacs " >> submit_Q61$mut 
+#   
+#    echo >> submit_Q61$mut
+#    echo "bash run_RasRal_Umbrella.sh StartingStructures/${molec}.pdb" >> submit_Q61$mut
    
     #sbatch submit_Q61$mut
     bash run_RasRal_Umbrella.sh StartingStructures/$molec.pdb
