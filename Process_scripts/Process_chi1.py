@@ -56,7 +56,7 @@ for molec in molecList :
 
         ax.plot(data[:,0],data[:,1],label=angle) 
 
-    fig.savefig("%s/chi1_hist_%s.pdf"%(saveDir, molec),format='pdf' ) 
+    fig.savefig("%s/chi1_hist_%s.png"%(saveDir, molec),format='png' ) 
     plt.close() 
 
     fig, ax = plt.subplots(1,1) 
@@ -99,7 +99,7 @@ for molec in molecList :
 
     hist, bins = np.histogram(angAccum, bins = np.linspace(-180,180,360) ) 
     ax.plot(hist) 
-    fig.savefig("%s/chi1_total_%s.pdf"%(saveDir,molec),format='pdf') 
+    fig.savefig("%s/chi1_total_%s.png"%(saveDir,molec),format='png') 
 
 
 
