@@ -88,8 +88,8 @@ for mol in molecList :
         print "Error importing data from file %s"%(datafile)
         continue 
 
-    #avg *= 10**3 ##nm^3 -> A^3
-    #std *= 10**3 ##nm^3 -> A^3
+    avg *= 10**3 ##nm^3 -> A^3
+    std *= 10**3 ##nm^3 -> A^3
 
     if mol == 'W' or mol == 'D' : 
         marker = '^'
