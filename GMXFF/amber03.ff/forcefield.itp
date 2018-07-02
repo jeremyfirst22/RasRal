@@ -21,5 +21,6 @@
 #include "gbsa.itp"
 #include "GTP.prm" 
 #include "CNC.prm" 
+#include "TCHG.prm" 
 
 
