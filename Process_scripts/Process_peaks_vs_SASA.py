@@ -8,6 +8,7 @@ import matplotlib.lines as mlines
 from scipy.stats import linregress
 from matplotlib import rc_file
 
+rcFile = 'rc_files/paper.rc' 
 exp_data = 'Exp_data/ftir_peaks.txt'
 
 nameToColorKeys = {
@@ -32,6 +33,7 @@ molecList = [
         "Y"
         ]
 
+rc_file(rcFile) 
 
 if not os.path.isdir('figures') : 
     os.mkdir('figures') 
@@ -48,6 +50,17 @@ with open(exp_data) as f :
             value = [float(line.split()[1]), float(line.split()[2])]
             nameToExpPeak[key] = value 
 
+plotKeys = {} 
+with open('Plotting_files/ColorMarkerKeys.txt') as f : 
+    lines = f.readlines()  
+    for line in lines : 
+        if line.startswith('#') : 
+            continue 
+        else : 
+            key = line.split()[0]
+            value = line.split()[1:]
+            plotKeys[key] = value 
+
 
 fig, ax = plt.subplots(1,1) 
 fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
@@ -58,6 +71,7 @@ avgAccum, peakAccum = [], []
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
     name = "Q61%s"%mol 
+    color,marker = plotKeys[mol]
     datafile = '%s/Analysis/boltzmann/area.weighted.out'%molec
     #print datafile
     try : 
@@ -86,7 +100,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color='k',capsize=3) 
+    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3) 
     #ax.scatter(peak, avg) 
     ax.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -100,7 +114,7 @@ ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
 ax.legend(loc=1) 
 
-fig.savefig('figures/peak_v_sasa_whole_residue.pdf',format='pdf') 
+fig.savefig('figures/peak_v_sasa_whole_residue.png',format='png') 
 plt.close() 
 
 
@@ -114,6 +128,7 @@ avgAccum, peakAccum = [], []
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
     name = "Q61%s"%mol 
+    color,marker = plotKeys[mol]
     datafile = '%s/Analysis/boltzmann/sidechain.weighted.out'%molec
     print datafile
     try : 
@@ -142,7 +157,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color='k',capsize=3) 
+    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3) 
     #ax.scatter(peak, avg) 
     ax.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -156,7 +171,7 @@ ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
 ax.legend(loc=1) 
 
-fig.savefig('figures/peak_v_sasa_sidechain.pdf',format='pdf') 
+fig.savefig('figures/peak_v_sasa_sidechain.png',format='png') 
 
 
 
@@ -169,6 +184,7 @@ avgAccum, peakAccum = [], []
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
     name = "Q61%s"%mol 
+    color,marker = plotKeys[mol]
     datafile = '%s/Analysis/boltzmann/polar.weighted.out'%molec
     print datafile
 
@@ -196,7 +212,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color='k',capsize=3) 
+    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color, capsize=3) 
     #ax.scatter(peak, avg) 
     ax.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -210,7 +226,7 @@ ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
 ax.legend(loc=1) 
 
-fig.savefig('figures/peak_v_sasa_polar.pdf',format='pdf') 
+fig.savefig('figures/peak_v_sasa_polar.png',format='png') 
 plt.close() 
 plt.close() 
 
@@ -225,6 +241,7 @@ avgAccum, peakAccum = [], []
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
     name = "Q61%s"%mol 
+    color,marker = plotKeys[mol]
     datafile = '%s/Analysis/boltzmann/sc_polar.weighted.out'%molec
     #print datafile
 
@@ -252,7 +269,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color='k',capsize=3) 
+    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color, capsize=3) 
     #ax.scatter(peak, avg) 
     ax.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -268,7 +285,7 @@ ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
 ax.legend(loc=1) 
 
-fig.savefig('figures/peak_v_sasa_sc_polar.pdf',format='pdf') 
+fig.savefig('figures/peak_v_sasa_sc_polar.png',format='png') 
 plt.close() 
 plt.close() 
 
@@ -283,6 +300,7 @@ avgAccum, peakAccum = [], []
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
     name = "Q61%s"%mol 
+    color,marker = plotKeys[mol]
     datafile = '%s/Analysis/boltzmann/davids.weighted.out'%molec
     #print datafile
 
@@ -310,7 +328,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color='k',capsize=3) 
+    ax.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3) 
     #ax.scatter(peak, avg) 
     ax.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -324,6 +342,6 @@ ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
 ax.legend(loc=1) 
 
-fig.savefig('figures/peak_v_sasa_davids.pdf',format='pdf') 
+fig.savefig('figures/peak_v_sasa_davids.png',format='png') 
 plt.close() 
 plt.close() 
