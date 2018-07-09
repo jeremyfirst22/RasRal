@@ -9,7 +9,7 @@ from scipy.stats import linregress
 from matplotlib import rc_file
 
 rcFile = 'rc_files/paper.rc'
-exp_data = 'Exp_data/rates2.txt'
+exp_data = 'Exp_data/rates.txt'
 
 molecList = [
         "D",

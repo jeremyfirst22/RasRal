@@ -8,7 +8,7 @@ import matplotlib.lines as mlines
 from scipy.stats import linregress
 from matplotlib import rc_file
 
-exp_data = 'Exp_data/rates2.txt'
+exp_data = 'Exp_data/rates.txt'
 rcFile = 'rc_files/paper.rc'
 
 molecList = [

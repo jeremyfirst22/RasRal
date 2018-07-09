@@ -65,8 +65,8 @@ with open('Plotting_files/ColorMarkerKeys.txt') as f :
 
 fig, ax = plt.subplots(1,1) 
 fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
-#fig.text(0.5,0.04, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
-fig.text(0.5,0.04, r"Rate (min$^{-1}$)", ha='center', va='center') 
+fig.text(0.5,0.04, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
+#fig.text(0.5,0.04, r"Rate (min$^{-1}$)", ha='center', va='center') 
 fig.text(0.05,0.5, r"Ext. field at nitrile ($\frac{k_B T}{e^- \AA}$)", ha='center', va='center',rotation='vertical') 
 
 avgAccum, peakAccum = [], [] 
