@@ -1,8 +1,9 @@
 #mol color marker 
 Q   b    o 
-D   r    o
-E   r    o
-H   r    o
+D   b    o
+E   b    o
+H   b    o
+X   c    ^
 K   r    o
 R   r    o
 N   b    o
