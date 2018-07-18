@@ -27,6 +27,7 @@ molecList = [
         "T",
         "V",
         "W",
+#        "X", 
         "Y"
         ]
 
@@ -91,9 +92,9 @@ for mol in molecList :
     avg *= 100 ##nm^2 -> A^2
     std *= 100 ##nm^2 -> A^2
 
-    if mol == 'W' or mol == 'D' : 
-        marker = '^'
-        color = 'c' 
+#    if mol == 'W' :# or mol == 'D' : 
+#        marker = '^'
+#        color = 'c' 
     if color == 'b' : 
         avgbAccum = np.append(avgbAccum,avg) 
         ratebAccum = np.append(ratebAccum,rate) 
@@ -108,24 +109,33 @@ for mol in molecList :
     #ax.scatter(rate, avg) 
     ax.annotate(mol, (rate, avg+1) ) 
 
-    print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    #print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
+    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+except ValueError : 
+    print "No red" 
 
-slope, intercept, r_value, p_value, std_error = linregress(ratekAccum, avgkAccum) 
-x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
+    x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+except ValueError : 
+    print "No black" 
 
 ax.legend(loc=1) 
 ax.set_xscale('log') 
@@ -165,7 +175,7 @@ for mol in molecList :
     avg *= 100 ##nm^2 -> A^2
     std *= 100 ##nm^2 -> A^2
 
-    if mol == 'W' or mol == 'D' : 
+    if mol == 'W' : #or mol == 'D' : 
         marker = '^'
         color = 'c' 
     if color == 'b' : 
@@ -186,20 +196,29 @@ for mol in molecList :
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
+    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+except ValueError : 
+    print "No red" 
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
-x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
+    x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+except ValueError : 
+    print "No black" 
 
 ax.legend(loc=1) 
 ax.set_xscale('log') 
@@ -240,9 +259,9 @@ for mol in molecList :
     avg *= 100 ##nm^2 -> A^2
     std *= 100 ##nm^2 -> A^2
 
-    if mol == 'W' or mol == 'D' : 
-        marker = '^'
-        color = 'c' 
+    #if mol == 'W' : #or mol == 'D' : 
+    #    marker = '^'
+    #    color = 'c' 
     if color == 'b' : 
         avgbAccum = np.append(avgbAccum,avg) 
         ratebAccum = np.append(ratebAccum,rate) 
@@ -257,24 +276,33 @@ for mol in molecList :
     #ax.scatter(rate, avg) 
     ax.annotate(mol, (rate, avg+1) ) 
 
-    print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    #print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
+    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+except ValueError : 
+    print "No red" 
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
-x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
+    x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+except ValueError : 
+    print "No black" 
 
 ax.legend(loc=1) 
 ax.set_xscale('log') 
@@ -327,9 +355,9 @@ for mol in molecList :
     avg /= avgIso ##nm^2 -> A^2
     #std /= stdIso ##nm^2 -> A^2
 
-    if mol == 'W' or mol == 'D' : 
-        marker = '^'
-        color = 'c' 
+    #if mol == 'W' :#or mol == 'D' : 
+    #    marker = '^'
+    #    color = 'c' 
     if color == 'b' : 
         avgbAccum = np.append(avgbAccum,avg) 
         ratebAccum = np.append(ratebAccum,rate) 
@@ -344,24 +372,33 @@ for mol in molecList :
     #ax.scatter(rate, avg) 
     ax.annotate(mol, (rate, avg+1) ) 
 
-    print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    #print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
+    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+except ValueError : 
+    print "No red" 
 
-slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
-x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
-y = slope * np.log(x) + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
+    x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+except ValueError : 
+    print "No black" 
 
 ax.legend(loc=1) 
 ax.set_xscale('log') 
@@ -422,19 +459,25 @@ for mol in molecList :
     #ax.scatter(rate, avg) 
     ax.annotate(mol, (rate, avg+1) ) 
 
-    print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    #print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * x + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
+    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+    y = slope * x + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+except ValueError : 
+    print "No red" 
 
 #slope, intercept, r_value, p_value, std_error = linregress(ratekAccum, avgkAccum) 
 #x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
@@ -501,19 +544,25 @@ for mol in molecList :
     #ax.scatter(rate, avg) 
     ax.annotate(mol, (rate, avg+1) ) 
 
-    print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    #print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * np.log(x) + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#try : 
+#    slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
+#    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+#    y = slope * x + intercept 
+#    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#except ValueError : 
+#    print "No red" 
 
 #slope, intercept, r_value, p_value, std_error = linregress(ratekAccum, avgkAccum) 
 #x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
@@ -580,19 +629,25 @@ for mol in molecList :
     #ax.scatter(rate, avg) 
     ax.annotate(mol, (rate, avg+1) ) 
 
-    print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    #print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
-x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+try : 
+    slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
+    x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+    y = slope * x + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+except ValueError : 
+    print "No blue" 
 
-slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
-x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+try :  
+    slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
+    x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+    y = slope * x + intercept 
+    ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+except ValueError : 
+    print "No red" 
 
 #slope, intercept, r_value, p_value, std_error = linregress(ratekAccum, avgkAccum) 
 #x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
