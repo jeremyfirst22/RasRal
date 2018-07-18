@@ -32,7 +32,7 @@ yerr1 = data[:,3]
 yerr2 = data[:,4] 
 
 fig, ax = plt.subplots(1,1) 
-fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.10,right=0.95, bottom=0.15) 
+fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.12,right=0.95, bottom=0.15) 
 fig.text(0.5,0.04, r"Time (min)", ha='center', va='center') 
 fig.text(0.03,0.5, r"[ $\rm{P_i}$ ] ($\rm{\mu M})$", ha='center', va='center',rotation='vertical') 
 
@@ -64,7 +64,7 @@ ax2.text(0.5,1.0,r"%.1f $\pm$ %.1f (x10$^{-2}$ min$^{-1}$)"%(slope*100, std_erro
 ax2.set_xticks([])
 ax2.set_yticks([])
 
-ax.legend(loc=2,fontsize='xx-small') 
+ax.legend(loc=2,fontsize='x-small') 
 #ax.set_xscale('log') 
 
 fig.savefig('figures/dockedFigure.png',format='png') 

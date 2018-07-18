@@ -34,7 +34,7 @@ y3    = data[:,5]
 yerr3 = data[:,6] 
 
 fig, ax = plt.subplots(1,1) 
-fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95, bottom=0.15) 
+fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.12,right=0.95, bottom=0.15) 
 fig.text(0.5,0.04, r"Time (min)", ha='center', va='center') 
 fig.text(0.03,0.5, r"[ $\rm{P_i}$ ] ($\rm{\mu M})$", ha='center', va='center',rotation='vertical') 
 
