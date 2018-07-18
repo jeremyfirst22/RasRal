@@ -17,9 +17,11 @@ nameToColorKeys = {
         }
 
 molecList = [
+        "A", 
 #        "D",
         "E",
         "F",
+        "G", 
         "H",
         "I",
         "K",
@@ -79,8 +81,8 @@ with open(exp_data2) as f :
 
 fig, ax = plt.subplots(1,1) 
 fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
-fig.text(0.5,0.04, r"Transorm efficiency", ha='center', va='center') 
-fig.text(0.03,0.5, r"Intial rate (min-1)", ha='center', va='center',rotation='vertical') 
+fig.text(0.5,0.04, r"Intial rate (min$^{-1}$)", ha='center', va='center') 
+fig.text(0.03,0.5, r"Transorm efficiency", ha='center', va='center',rotation='vertical') 
 
 avgbAccum, ratebAccum = [], [] 
 avgrAccum, raterAccum = [], [] 
@@ -94,10 +96,7 @@ for mol in molecList :
 
     rate, error = nameToExpRate[name] 
 
-    if mol == 'I' or mol == 'N' : 
-        marker = '^' 
-        color = 'c'
-    elif color == 'b' : 
+    if color == 'b' : 
         avgbAccum = np.append(avgbAccum,peak) 
         ratebAccum = np.append(ratebAccum,rate) 
     elif color == 'r' : 
@@ -107,30 +106,27 @@ for mol in molecList :
         avgkAccum = np.append(avgkAccum,peak) 
         ratekAccum = np.append(ratekAccum,rate) 
 
-    ax.errorbar(peak,rate,yerr=error,marker=marker,color=color, capsize=3) 
-    ax.annotate(mol, (peak+0.03, rate) ) 
+    ax.errorbar(rate,peak, xerr=error,marker=marker,color=color, capsize=3) 
+    ax.annotate(mol, (rate,peak) ) 
 
-slope, intercept, r_value, p_value, std_error = linregress(avgbAccum, ratebAccum) 
-x = np.linspace(np.min(avgbAccum), np.max(avgbAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+#slope, intercept, r_value, p_value, std_error = linregress(ratebAccum,avgbAccum) 
+#x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+#y = slope * x + intercept 
+#ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
 
-slope, intercept, r_value, p_value, std_error = linregress(avgrAccum, raterAccum) 
-x = np.linspace(np.min(avgrAccum), np.max(avgrAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#slope, intercept, r_value, p_value, std_error = linregress(avgrAccum, raterAccum) 
+#x = np.linspace(np.min(avgrAccum), np.max(avgrAccum),100) 
+#y = slope * x + intercept 
+#ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#
+#slope, intercept, r_value, p_value, std_error = linregress(avgkAccum, ratekAccum) 
+#x = np.linspace(np.min(avgkAccum), np.max(avgkAccum),100) 
+#y = slope * x + intercept 
+#ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
-slope, intercept, r_value, p_value, std_error = linregress(avgkAccum, ratekAccum) 
-x = np.linspace(np.min(avgkAccum), np.max(avgkAccum),100) 
-y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+ax.legend(loc=2) 
 
-ax.legend(loc=1) 
-
-ax.set_ylim([0.0025, 0.12]) 
-
-ax.set_yscale('log')
-#ax.set_xscale('log')
+ax.set_xscale('log')
 
 fig.savefig('figures/rate_v_transform.png',format='png') 
 plt.close() 
