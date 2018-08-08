@@ -91,9 +91,6 @@ for mol in molecList :
     avg *= 10**3 ##nm^3 -> A^3
     std *= 10**3 ##nm^3 -> A^3
 
-    if mol == 'W' or mol == 'D' : 
-        marker = '^'
-        color = 'c' 
     if color == 'b' : 
         avgbAccum = np.append(avgbAccum,avg) 
         ratebAccum = np.append(ratebAccum,rate) 
@@ -112,19 +109,19 @@ for mol in molecList :
 
     #index +=1
 
-slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
+slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
 x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
-y = slope * x + intercept 
+y = slope * np.log(x) + intercept 
 ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
 
-slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
+slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
 x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
-y = slope * x + intercept 
+y = slope * np.log(x) + intercept 
 ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
 
-slope, intercept, r_value, p_value, std_error = linregress(ratekAccum, avgkAccum) 
+slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
 x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
-y = slope * x + intercept 
+y = slope * np.log(x) + intercept 
 ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
 
 ax.legend(loc=1) 
