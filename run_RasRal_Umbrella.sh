@@ -125,8 +125,14 @@ analysis_windows(){
         hbond_Y32 $angle 
         chi1_Y32 $angle
         scount $angle 
+        scount_O2G $angle 
+        scount_vary_O1G $angle 
+        scount_vary_SCD $angle 
+        scount_both $angle 
+        scount_polar $angle 
         scount_2 $angle 
         force_nitrile $angle 
+        g12_os3_dist $angle 
     done
     wham
     boltzmann_weight
@@ -524,6 +530,9 @@ polar_sasa(){
         W) 
             polarAtoms="resindex $Q61 and name NE1 HE1" 
           ;; 
+        X)  ##rtp HIP; charged Histidine  
+            polarAtoms="resindex $Q61 and name ND1 NE2 HE2 HD1"
+          ;; 
         Y) 
             polarAtoms="resindex $Q61 and name OH HH" 
           ;; 
@@ -627,7 +636,7 @@ nopbc(){
         echo 'Protein System' | gmx trjconv -f ../../Production/$window/equilibrated_starting.$window.gro \
             -s ../../Production/$window/$MOLEC.$window.tpr \
             -center \
-            -pbc mol \
+            -pbc whole \
             -ur compact \
             -o nopbc.$window.gro >> $logFile 2>> $errFile 
         check nopbc.$window.gro 
@@ -635,7 +644,7 @@ nopbc(){
         echo 'Protein System' | gmx trjconv -f ../../Production/$window/$MOLEC.$window.xtc \
             -s ../../Production/$window/$MOLEC.$window.tpr \
             -center \
-            -pbc mol \
+            -pbc whole \
             -ur compact \
             -o nopbc.$window.xtc >> $logFile 2>> $errFile 
         check nopbc.$window.xtc 
@@ -690,11 +699,22 @@ boltzmann_weight(){
         || ! -f boltzmann/hbnum_Q61.weighted.out \
         || ! -f boltzmann/hbnum_Y32.weighted.out \
         || ! -f boltzmann/angaver_Y32.weighted.out \
-        || ! -f boltzmann/size.weighted.out \
+        || ! -f boltzmann/size_245.weighted.out \
+        || ! -f boltzmann/size_3.weighted.out \
+        || ! -f boltzmann/size_4.weighted.out \
+        || ! -f boltzmann/size_5.weighted.out \
+        || ! -f boltzmann/both_size_245.weighted.out \
+        || ! -f boltzmann/both_size_3.weighted.out \
+        || ! -f boltzmann/both_size_4.weighted.out \
+        || ! -f boltzmann/both_size_5.weighted.out \
         || ! -f boltzmann/size2.weighted.out \
         || ! -f boltzmann/external_field.weighted.out \
         || ! -f boltzmann/sidechain.weighted.out ]] \
         || [[ ! -f boltzmann/sc_polar.weighted.out && -f polar_sasa/sc_polar.330.xvg ]] \
+        || [[ ! -f boltzmann/size_polar_245.weighted.out && -f scount_polar/size.330.xvg ]] \
+        || [[ ! -f boltzmann/size_polar_3.weighted.out && -f scount_polar/size.330.xvg ]] \
+        || [[ ! -f boltzmann/size_polar_4.weighted.out && -f scount_polar/size.330.xvg ]] \
+        || [[ ! -f boltzmann/size_polar_5.weighted.out && -f scount_polar/size.330.xvg ]] \
         || [[ ! -f boltzmann/davids.weighted.out && -f polar_sasa/davids.330.xvg ]] \
         || [[ ! -f boltzmann/polar.weighted.out && -f polar_sasa/polar.330.xvg ]] \
         && [ -f $FORCE_TOOLS/boltzmann_weight ]  ; then 
@@ -1011,21 +1031,522 @@ boltzmann_weight(){
         fi 
         check angaver_Y32.weighted.out 
 
-        if [ ! -f size.weighted.out ] ; then 
-            if [ -f size.boltzmann.inp ] ; then rm size.boltzmann.inp ; fi 
+        if [ ! -f size_245.weighted.out ] ; then 
+            if [ -f size_245.boltzmann.inp ] ; then rm size_245.boltzmann.inp ; fi 
 
             i=0
-            touch size.boltzmann.inp 
+            touch size_245.boltzmann.inp 
             for window in `seq 0 $angBinDist 359` ; do 
-                clean_xvg ../scount/size.$window.xvg size.$window.xvg 
-                echo "../WHAM/$MOLEC.output.$i.bin   size.$window.xvg" >> size.boltzmann.inp 
+                clean_xvg ../scount/size_245.$window.xvg size_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_245.$window.xvg" >> size_245.boltzmann.inp 
                 ((i++)) 
             done 
 
-            $FORCE_TOOLS/boltzmann_weight -l size.boltzmann.inp \
+            $FORCE_TOOLS/boltzmann_weight -l size_245.boltzmann.inp \
                 -p ../wham/$MOLEC.output.prob \
-                -o size.weighted.out >> $logFile 2>> $errFile 
+                -o size_245.weighted.out >> $logFile 2>> $errFile 
             rm *.xvg 
+        fi 
+        check size_245.weighted.out 
+
+        if [ ! -f size_3.weighted.out ] ; then 
+            if [ -f size_3.boltzmann.inp ] ; then rm size_3.boltzmann.inp ; fi 
+
+            i=0
+            touch size_3.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount/size_3.$window.xvg size_3.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_3.$window.xvg" >> size_3.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_3.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_3.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check size_3.weighted.out 
+
+        if [ ! -f size_4.weighted.out ] ; then 
+            if [ -f size_4.boltzmann.inp ] ; then rm size_4.boltzmann.inp ; fi 
+
+            i=0
+            touch size_4.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount/size_4.$window.xvg size_4.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_4.$window.xvg" >> size_4.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_4.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_4.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check size_4.weighted.out 
+
+        if [ ! -f size_5.weighted.out ] ; then 
+            if [ -f size_5.boltzmann.inp ] ; then rm size_5.boltzmann.inp ; fi 
+
+            i=0
+            touch size_5.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount/size_5.$window.xvg size_5.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_5.$window.xvg" >> size_5.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_5.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_5.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check size_5.weighted.out 
+
+        if [ ! -f size_6.weighted.out ] ; then 
+            if [ -f size_6.boltzmann.inp ] ; then rm size_6.boltzmann.inp ; fi 
+
+            i=0
+            touch size_6.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount/size_6.$window.xvg size_6.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_6.$window.xvg" >> size_6.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_6.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_6.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check size_6.weighted.out 
+
+        if [ ! -f O1G_size_245.weighted.out ] ; then 
+            if [ -f O1G_size_245.boltzmann.inp ] ; then rm O1G_size_245.boltzmann.inp ; fi 
+
+            i=0
+            touch O1G_size_245.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O1G/size_245.$window.xvg O1G_size_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O1G_size_245.$window.xvg" >> O1G_size_245.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O1G_size_245.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O1G_size_245.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O1G_size_245.weighted.out 
+
+        if [ ! -f O1G_size_3.weighted.out ] ; then 
+            if [ -f O1G_size_3.boltzmann.inp ] ; then rm O1G_size_3.boltzmann.inp ; fi 
+
+            i=0
+            touch O1G_size_3.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O1G/size_3.$window.xvg O1G_size_3.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O1G_size_3.$window.xvg" >> O1G_size_3.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O1G_size_3.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O1G_size_3.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O1G_size_3.weighted.out 
+
+        if [ ! -f O1G_size_4.weighted.out ] ; then 
+            if [ -f O1G_size_4.boltzmann.inp ] ; then rm O1G_size_4.boltzmann.inp ; fi 
+
+            i=0
+            touch O1G_size_4.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O1G/size_4.$window.xvg O1G_size_4.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O1G_size_4.$window.xvg" >> O1G_size_4.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O1G_size_4.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O1G_size_4.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O1G_size_4.weighted.out 
+
+        if [ ! -f O1G_size_5.weighted.out ] ; then 
+            if [ -f O1G_size_5.boltzmann.inp ] ; then rm O1G_size_5.boltzmann.inp ; fi 
+
+            i=0
+            touch O1G_size_5.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O1G/size_5.$window.xvg O1G_size_5.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O1G_size_5.$window.xvg" >> O1G_size_5.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O1G_size_5.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O1G_size_5.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O1G_size_5.weighted.out 
+
+        if [ ! -f O1G_size_6.weighted.out ] ; then 
+            if [ -f O1G_size_6.boltzmann.inp ] ; then rm O1G_size_6.boltzmann.inp ; fi 
+
+            i=0
+            touch O1G_size_6.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O1G/size_6.$window.xvg O1G_size_6.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O1G_size_6.$window.xvg" >> O1G_size_6.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O1G_size_6.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O1G_size_6.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O1G_size_6.weighted.out 
+
+        if [ ! -f SCD_size_245.weighted.out ] ; then 
+            if [ -f SCD_size_245.boltzmann.inp ] ; then rm SCD_size_245.boltzmann.inp ; fi 
+
+            i=0
+            touch SCD_size_245.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_SCD/size_245.$window.xvg SCD_size_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   SCD_size_245.$window.xvg" >> SCD_size_245.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l SCD_size_245.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o SCD_size_245.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check SCD_size_245.weighted.out 
+
+        if [ ! -f O2G_size_245.weighted.out ] ; then 
+            if [ -f O2G_size_245.boltzmann.inp ] ; then rm O2G_size_245.boltzmann.inp ; fi 
+
+            i=0
+            touch O2G_size_245.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O2G/size_245.$window.xvg O2G_size_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O2G_size_245.$window.xvg" >> O2G_size_245.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O2G_size_245.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O2G_size_245.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O2G_size_245.weighted.out 
+        if [ ! -f O2G_size_3.weighted.out ] ; then 
+            if [ -f O2G_size_3.boltzmann.inp ] ; then rm O2G_size_3.boltzmann.inp ; fi 
+
+            i=0
+            touch O2G_size_3.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O2G/size_3.$window.xvg O2G_size_3.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O2G_size_3.$window.xvg" >> O2G_size_3.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O2G_size_3.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O2G_size_3.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O2G_size_3.weighted.out 
+        if [ ! -f O2G_size_4.weighted.out ] ; then 
+            if [ -f O2G_size_4.boltzmann.inp ] ; then rm O2G_size_4.boltzmann.inp ; fi 
+
+            i=0
+            touch O2G_size_4.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O2G/size_4.$window.xvg O2G_size_4.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O2G_size_4.$window.xvg" >> O2G_size_4.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O2G_size_4.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O2G_size_4.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O2G_size_4.weighted.out 
+        if [ ! -f O2G_size_5.weighted.out ] ; then 
+            if [ -f O2G_size_5.boltzmann.inp ] ; then rm O2G_size_5.boltzmann.inp ; fi 
+
+            i=0
+            touch O2G_size_5.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O2G/size_5.$window.xvg O2G_size_5.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O2G_size_5.$window.xvg" >> O2G_size_5.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O2G_size_5.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O2G_size_5.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O2G_size_5.weighted.out 
+        if [ ! -f O2G_size_6.weighted.out ] ; then 
+            if [ -f O2G_size_6.boltzmann.inp ] ; then rm O2G_size_6.boltzmann.inp ; fi 
+
+            i=0
+            touch O2G_size_6.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O2G/size_6.$window.xvg O2G_size_6.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O2G_size_6.$window.xvg" >> O2G_size_6.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O2G_size_6.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O2G_size_6.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O2G_size_6.weighted.out 
+
+
+        if [ ! -f SCD_size_3.weighted.out ] ; then 
+            if [ -f SCD_size_3.boltzmann.inp ] ; then rm SCD_size_3.boltzmann.inp ; fi 
+
+            i=0
+            touch SCD_size_3.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_SCD/size_3.$window.xvg SCD_size_3.$window.xvg 
+        if [ ! -f O2G_size_245.weighted.out ] ; then 
+            if [ -f O2G_size_245.boltzmann.inp ] ; then rm O2G_size_245.boltzmann.inp ; fi 
+
+            i=0
+            touch O2G_size_245.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_O2G/size_245.$window.xvg O2G_size_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   O2G_size_245.$window.xvg" >> O2G_size_245.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l O2G_size_245.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o O2G_size_245.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check O2G_size_245.weighted.out 
+                echo "../WHAM/$MOLEC.output.$i.bin   SCD_size_3.$window.xvg" >> SCD_size_3.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l SCD_size_3.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o SCD_size_3.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check SCD_size_3.weighted.out 
+
+        if [ ! -f SCD_size_4.weighted.out ] ; then 
+            if [ -f SCD_size_4.boltzmann.inp ] ; then rm SCD_size_4.boltzmann.inp ; fi 
+
+            i=0
+            touch SCD_size_4.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_SCD/size_4.$window.xvg SCD_size_4.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   SCD_size_4.$window.xvg" >> SCD_size_4.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l SCD_size_4.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o SCD_size_4.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check SCD_size_4.weighted.out 
+
+        if [ ! -f SCD_size_5.weighted.out ] ; then 
+            if [ -f SCD_size_5.boltzmann.inp ] ; then rm SCD_size_5.boltzmann.inp ; fi 
+
+            i=0
+            touch SCD_size_5.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_SCD/size_5.$window.xvg SCD_size_5.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   SCD_size_5.$window.xvg" >> SCD_size_5.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l SCD_size_5.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o SCD_size_5.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check SCD_size_5.weighted.out 
+
+        if [ ! -f SCD_size_6.weighted.out ] ; then 
+            if [ -f SCD_size_6.boltzmann.inp ] ; then rm SCD_size_6.boltzmann.inp ; fi 
+
+            i=0
+            touch SCD_size_6.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_SCD/size_6.$window.xvg SCD_size_6.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   SCD_size_6.$window.xvg" >> SCD_size_6.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l SCD_size_6.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o SCD_size_6.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check SCD_size_6.weighted.out 
+
+        if [ ! -f both_size_245.weighted.out ] ; then 
+            if [ -f both_size_245.boltzmann.inp ] ; then rm both_size_245.boltzmann.inp ; fi 
+
+            i=0
+            touch both_size_245.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_both/size_245.$window.xvg both_size_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   both_size_245.$window.xvg" >> both_size_245.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l both_size_245.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o both_size_245.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check both_size_245.weighted.out 
+
+        if [ ! -f both_size_3.weighted.out ] ; then 
+            if [ -f both_size_3.boltzmann.inp ] ; then rm both_size_3.boltzmann.inp ; fi 
+
+            i=0
+            touch both_size_3.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_both/size_3.$window.xvg both_size_3.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   both_size_3.$window.xvg" >> both_size_3.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l both_size_3.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o both_size_3.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check both_size_3.weighted.out 
+
+        if [ ! -f both_size_4.weighted.out ] ; then 
+            if [ -f both_size_4.boltzmann.inp ] ; then rm both_size_4.boltzmann.inp ; fi 
+
+            i=0
+            touch both_size_4.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount/size_4.$window.xvg both_size_4.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   both_size_4.$window.xvg" >> both_size_4.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l both_size_4.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o both_size_4.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check both_size_4.weighted.out 
+
+        if [ ! -f both_size_5.weighted.out ] ; then 
+            if [ -f both_size_5.boltzmann.inp ] ; then rm both_size_5.boltzmann.inp ; fi 
+
+            i=0
+            touch both_size_5.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_both/size_5.$window.xvg both_size_5.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   both_size_5.$window.xvg" >> both_size_5.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l both_size_5.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o both_size_5.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check both_size_5.weighted.out 
+
+        if [[ ! -f size_polar_245.weighted.out && -f ../scount_polar/size_245.$window.xvg ]] ; then 
+            if [ -f size_polar_245.boltzmann.inp ] ; then rm size_polar_245.boltzmann.inp ; fi 
+
+            i=0
+            touch size_polar_245.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_polar/size_245.$window.xvg size_polar_245.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_polar_245.$window.xvg" >> size_polar_245.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_polar_245.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_polar_245.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+            check size_polar_245.weighted.out
+        fi 
+
+        if [[ ! -f size_polar_3.weighted.out && -f ../scount_polar/size_3.$window.xvg ]] ; then 
+            if [ -f size_polar_3.boltzmann.inp ] ; then rm size_polar_3.boltzmann.inp ; fi 
+
+            i=0
+            touch size_polar_3.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_polar/size_3.$window.xvg size_polar_3.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_polar_3.$window.xvg" >> size_polar_3.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_polar_3.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_polar_3.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+            check size_polar_3.weighted.out
+        fi 
+
+        if [[ ! -f size_polar_4.weighted.out && -f ../scount_polar/size_4.$window.xvg ]] ; then 
+            if [ -f size_polar_4.boltzmann.inp ] ; then rm size_polar_4.boltzmann.inp ; fi 
+
+            i=0
+            touch size_polar_4.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_polar/size_4.$window.xvg size_polar_4.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_polar_4.$window.xvg" >> size_polar_4.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_polar_4.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_polar_4.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+            check size_polar_4.weighted.out
+        fi 
+
+        if [[ ! -f size_polar_5.weighted.out && -f ../scount_polar/size_5.$window.xvg ]] ; then 
+            if [ -f size_polar_5.boltzmann.inp ] ; then rm size_polar_5.boltzmann.inp ; fi 
+
+            i=0
+            touch size_polar_5.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_polar/size_5.$window.xvg size_polar_5.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   size_polar_5.$window.xvg" >> size_polar_5.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l size_polar_5.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o size_polar_5.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+            check size_polar_5.weighted.out
         fi 
 
         if [ ! -f size2.weighted.out ] ; then 
@@ -1063,6 +1584,42 @@ boltzmann_weight(){
         fi 
         check external_field_nitrile.weighted.out 
 
+        if [ ! -f g12_hbnum.weighted.out ] ; then 
+            if [ -f g12_hbnum.boltzmann.inp ] ; then rm g12_hbnum.boltzmann.inp ; fi 
+
+            i=0
+            touch g12_hbnum.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../g12_os3_dist/hbnum.$window.xvg g12_hbnum.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   g12_hbnum.$window.xvg" >> g12_hbnum.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l g12_hbnum.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o g12_hbnum.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check g12_hbnum.weighted.out 
+
+        if [ ! -f g12_distave.weighted.out ] ; then 
+            if [ -f g12_distave.boltzmann.inp ] ; then rm g12_distave.boltzmann.inp ; fi 
+
+            i=0
+            touch g12_distave.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../g12_os3_dist/distave.$window.xvg g12_distave.$window.xvg 
+                echo "../WHAM/$MOLEC.output.$i.bin   g12_distave.$window.xvg" >> g12_distave.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l g12_distave.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o g12_distave.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check g12_distave.weighted.out 
+
         #check endFile.$window.xvg
         clean 
         printf "Success\n" 
@@ -1081,7 +1638,6 @@ clean_xvg(){
 }
 
 nearest_water(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1125,7 +1681,6 @@ nearest_water(){
 }
 
 dist_to_Q69(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1169,7 +1724,6 @@ dist_to_Q69(){
 }
 
 dist_to_Y32(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1213,7 +1767,6 @@ dist_to_Y32(){
 }
 
 rmsd_gtp(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1264,7 +1817,6 @@ rmsd_gtp(){
 }
 
 rmsd_l4loop(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1300,7 +1852,6 @@ rmsd_l4loop(){
 }
 
 gmx_hbond(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1353,7 +1904,6 @@ gmx_hbond(){
 }
 
 volume_Q61(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1389,7 +1939,6 @@ volume_Q61(){
 }
 
 hbond_Q61(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1439,7 +1988,6 @@ hbond_Q61(){
 }
 
 hbond_Y32(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1489,7 +2037,6 @@ hbond_Y32(){
 }
 
 chi1_Y32(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1527,7 +2074,6 @@ chi1_Y32(){
 }
 
 scount(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1535,16 +2081,49 @@ scount(){
     window=$1
 
     printf "\t\t\t%10s........................" "scount" 
-    if [ ! -f scount/size.$window.xvg ]  ; then 
+    if [[ ! -f scount/size_245.$window.xvg || ! -f scount/size_3.$window.xvg || ! -f scount/size_4.$window.xvg || ! -f scount/size_5.$window.xvg || scount/size_6.$window.xvg ]]  ; then 
         create_dir scount
         cd scount
 
-        #analysis function that produces endFile
-        gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
-            -f ../../Production/$window/$MOLEC.$window.xtc \
-            -select "group \"Water\" and same residue as ((within 0.4 of group \"SideChain\" and resindex $Q61) and (within 0.3 of resname GTP and name O1G))" \
-            -os size.$window.xvg >> $logFile 2>> $errFile 
-        check size.$window.xvg
+        if [ ! -f size_245.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.245 of group \"SideChain\" and resindex $Q61) and (within 0.245 of resname GTP and name O1G))" \
+                -os size_245.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_245.$window.xvg
+
+        if [ ! -f size_3.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.3 of group \"SideChain\" and resindex $Q61) and (within 0.3 of resname GTP and name O1G))" \
+                -os size_3.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_3.$window.xvg
+
+        if [ ! -f size_4.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.4 of group \"SideChain\" and resindex $Q61) and (within 0.4 of resname GTP and name O1G))" \
+                -os size_4.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_4.$window.xvg
+
+        if [ ! -f size_5.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_5.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_5.$window.xvg
+
+        if [ ! -f size_6.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.6 of group \"SideChain\" and resindex $Q61) and (within 0.6 of resname GTP and name O1G))" \
+                -os size_6.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_6.$window.xvg
 
         clean 
         printf "Success\n" 
@@ -1554,8 +2133,339 @@ scount(){
         fi 
 }
 
+scount_O2G(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "scount O2G" 
+    if [[ ! -f scount_O2G/size_245.$window.xvg || ! -f scount_O2G/size_3.$window.xvg || ! -f scount_O2G/size_4.$window.xvg || ! -f scount_O2G/size_5.$window.xvg || scount_O2G/size_6.$window.xvg ]]  ; then 
+        create_dir scount_O2G
+        cd scount_O2G
+
+        if [ ! -f size_245.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.245 of group \"SideChain\" and resindex $Q61) and (within 0.245 of resname GTP and name O2G))" \
+                -os size_245.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_245.$window.xvg
+
+        if [ ! -f size_3.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.3 of group \"SideChain\" and resindex $Q61) and (within 0.3 of resname GTP and name O2G))" \
+                -os size_3.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_3.$window.xvg
+
+        if [ ! -f size_4.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.4 of group \"SideChain\" and resindex $Q61) and (within 0.4 of resname GTP and name O2G))" \
+                -os size_4.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_4.$window.xvg
+
+        if [ ! -f size_5.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O2G))" \
+                -os size_5.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_5.$window.xvg
+
+        if [ ! -f size_6.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.6 of group \"SideChain\" and resindex $Q61) and (within 0.6 of resname GTP and name O2G))" \
+                -os size_6.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_6.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+scount_vary_O1G(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "scount O1G" 
+    if [[ ! -f scount_O1G/size_245.$window.xvg || ! -f scount_O1G/size_3.$window.xvg || ! -f scount_O1G/size_4.$window.xvg || ! -f scount_O1G/size_5.$window.xvg || scount_O1G/size_6.$window.xvg ]]  ; then 
+        create_dir scount_O1G
+        cd scount_O1G
+
+        if [ ! -f size_245.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.245 of resname GTP and name O1G))" \
+                -os size_245.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_245.$window.xvg
+
+        if [ ! -f size_3.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.3 of resname GTP and name O1G))" \
+                -os size_3.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_3.$window.xvg
+
+        if [ ! -f size_4.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.4 of resname GTP and name O1G))" \
+                -os size_4.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_4.$window.xvg
+
+        if [ ! -f size_5.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_5.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_5.$window.xvg
+
+        if [ ! -f size_6.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.6 of resname GTP and name O1G))" \
+                -os size_6.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_6.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+scount_both(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "scount_both" 
+    if [[ ! -f scount_both/size_245.$window.xvg || ! -f scount_both/size_3.$window.xvg || ! -f scount_both/size_4.$window.xvg || ! -f scount_both/size_5.$window.xvg ]]  ; then 
+        create_dir scount_both
+        cd scount_both
+
+        if [ ! -f size_245.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.245 of group \"SideChain\" and resindex $Q61) and (within 0.245 of resname GTP and name O1G O2G))" \
+                -os size_245.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_245.$window.xvg
+
+        if [ ! -f size_3.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.3 of group \"SideChain\" and resindex $Q61) and (within 0.3 of resname GTP and name O1G O2G))" \
+                -os size_3.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_3.$window.xvg
+
+        if [ ! -f size_4.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.4 of group \"SideChain\" and resindex $Q61) and (within 0.4 of resname GTP and name O1G O2G))" \
+                -os size_4.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_4.$window.xvg
+
+        if [ ! -f size_5.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G O2G))" \
+                -os size_5.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_5.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+scount_vary_SCD(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "scount SCD" 
+    if [[ ! -f scount_SCD/size_245.$window.xvg || ! -f scount_SCD/size_3.$window.xvg || ! -f scount_SCD/size_4.$window.xvg || ! -f scount_SCD/size_5.$window.xvg || scount_SCD/size_6.$window.xvg ]]  ; then 
+        create_dir scount_SCD
+        cd scount_SCD
+
+        if [ ! -f size_245.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.245 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_245.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_245.$window.xvg
+
+        if [ ! -f size_3.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.3 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_3.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_3.$window.xvg
+
+        if [ ! -f size_4.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.4 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_4.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_4.$window.xvg
+
+        if [ ! -f size_5.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_5.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_5.$window.xvg
+
+        if [ ! -f size_6.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.6 of group \"SideChain\" and resindex $Q61) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_6.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_6.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+scount_polar(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    sideChainPolar=true
+    case "${MOLEC: -1}" in 
+        D) 
+            polarAtoms="resindex $Q61 and name OD1 OD2" 
+          ;; 
+        E) 
+            polarAtoms="resindex $Q61 and name OE1 OE2" 
+          ;; 
+        H)  ##Q61H was assigned rtp HIE entry, so we need those atoms
+            polarAtoms="resindex $Q61 and name ND1 NE2 HE2"
+          ;; 
+        K) 
+            polarAtoms="resindex $Q61 and name NZ HZ1 HZ2 HZ3"
+          ;; 
+        N) 
+            polarAtoms="resindex $Q61 and name OD1 ND2 HD21 HD22"
+          ;; 
+        Q) 
+            polarAtoms="resindex $Q61 and name OE1 NE2 HE21 HE22"
+          ;; 
+        R) 
+            polarAtoms="resindex $Q61 and name NE NH1 NH2 HH11 HH12 HH21 HH22 HE"
+          ;;
+        S) 
+            polarAtoms="resindex $Q61 and name OG HG" 
+          ;; 
+        T) 
+            polarAtoms="resindex $Q61 and name OG1 HG1"
+          ;; 
+        W) 
+            polarAtoms="resindex $Q61 and name NE1 HE1" 
+          ;; 
+        X)  ##rtp HIP; charged Histidine  
+            polarAtoms="resindex $Q61 and name ND1 NE2 HE2 HD1"
+          ;; 
+        Y) 
+            polarAtoms="resindex $Q61 and name OH HH" 
+          ;; 
+        *) 
+            sideChainPolar=false
+            polarAtoms="resindex $Q61 and name"
+          ;; 
+    esac 
+
+
+    if [ "$sideChainPolar" != false ] ; then 
+    printf "\t\t\t%10s........................" "scount_polar" 
+        if [[ ! -f scount_polar/size_245.$window.xvg || ! -f scount_polar/size_3.$window.xvg || ! -f scount_polar/size_4.$window.xvg || ! -f scount_polar/size_5.$window.xvg ]]  ; then 
+        create_dir scount_polar
+        cd scount_polar
+
+        #analysis function that produces endFile
+        if [ ! -f size_245.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.245 of $polarAtoms) and (within 0.245 of resname GTP and name O1G))" \
+                -os size_245.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_245.$window.xvg
+
+        if [ ! -f size_3.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.3 of $polarAtoms) and (within 0.3 of resname GTP and name O1G))" \
+                -os size_3.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_3.$window.xvg
+
+        if [ ! -f size_4.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.4 of $polarAtoms) and (within 0.4 of resname GTP and name O1G))" \
+                -os size_4.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_4.$window.xvg
+
+        if [ ! -f size_5.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of $polarAtoms) and (within 0.5 of resname GTP and name O1G))" \
+                -os size_5.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size_5.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+    fi 
+}
+
 scount_2(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1583,7 +2493,6 @@ scount_2(){
 }
 
 force_nitrile(){
-    ##Call from analysis_windows()
     if [ -z $1 ] ; then 
         echo "ERROR: Argument missing." 
         echo "Usage: $0 < window (degrees) > "
@@ -1766,6 +2675,55 @@ force_nitrile(){
         cd ../
     else 
         printf "\t\t\t\t  ........................Skipped\n"
+        fi 
+}
+
+g12_os3_dist(){
+    ##Call from analysis_windows()
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "G12 OS3 Dist" 
+    if [[ ! -f g12_os3_dist/hbnum.$window.xvg || ! -f distave.$window.xvg ]]  ; then 
+        create_dir g12_os3_dist
+        cd g12_os3_dist
+
+        #analysis function that produces endFile
+
+        if [ ! -f hbnum.$window.xvg ] ; then 
+            echo "[ GTP ]" > index.ndx 
+            cat ../../Production/$window/$MOLEC.$window.gro | grep "GTP" | grep "OS3" | awk '{print $3}' >> index.ndx 
+            echo "[ G12 ]" >> index.ndx 
+            cat ../../Production/$window/$MOLEC.$window.gro | grep "117GLY" | grep " N " | awk '{print $3}' >> index.ndx 
+            cat ../../Production/$window/$MOLEC.$window.gro | grep "117GLY" | grep " H " | awk '{print $3}' >> index.ndx 
+
+            echo '1 0' | gmx hbond -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -n index.ndx \
+                -num hbnum.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check hbnum.$window.xvg 
+
+        if [ ! -f distave.$window.xvg ] ; then 
+            echo "[ OS3_G12 ]" > index.ndx 
+            cat ../../Production/$window/$MOLEC.$window.gro | grep "GTP" | grep "OS3" | awk '{print $3}' >> index.ndx 
+            cat ../../Production/$window/$MOLEC.$window.gro | grep "117GLY" | grep " N " | awk '{print $3}' >> index.ndx 
+
+            echo '0' | gmx distance -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -n index.ndx \
+                -oav distave.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check distave.$window.xvg 
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
         fi 
 }
 
