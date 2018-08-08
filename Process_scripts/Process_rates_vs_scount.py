@@ -68,8 +68,9 @@ def logFit(x, a, b) :
 for dist in ['245', '3', '4', '5', '6'] : 
     fig, ax = plt.subplots(1,1) 
     fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
-    fig.text(0.5,0.04, r"Rate (min$^{-1}$)", ha='center', va='center') 
-    fig.text(0.03,0.5, r"Num waters within %s A of Q61 s.c. and %s A of O1G"%(dist, dist) , ha='center', va='center',rotation='vertical') 
+    fig.text(0.5,0.04, r"Initial rate ($\mu$M min$^{-1}$)", ha='center', va='center') 
+    #fig.text(0.03,0.5, r"Num waters within %s A of Q61 s.c. and %s A of O1G"%(dist, dist) , ha='center', va='center',rotation='vertical') 
+    fig.text(0.03,0.5, r"Average number of waters", ha='center', va='center',rotation='vertical') 
     
     avgbAccum, ratebAccum = [], [] 
     avgrAccum, raterAccum = [], [] 
@@ -79,6 +80,86 @@ for dist in ['245', '3', '4', '5', '6'] :
         name = "Q61%s"%mol 
         color, marker = plotKeys[mol] 
         datafile = '%s/Analysis/boltzmann/size_%s.weighted.out'%(molec,dist) 
+        #print datafile
+    
+        rate, error = nameToExpRate[name] 
+        
+        try : 
+            with open(datafile) as f : 
+                lines = f.readlines() 
+                avg = float(lines[1].split()[-2]) 
+                std = float(lines[1].split()[-1])
+        except IOError : 
+            print "No file found for %s"%(datafile)  
+            continue     
+        except : 
+            print "Error importing data from file %s"%(datafile)
+            continue 
+    
+        avg /= 3 ##atoms -> water molecules
+        std /= 3 ##atoms -> water molecules 
+    
+        if color == 'b' : 
+            avgbAccum = np.append(avgbAccum,avg) 
+            ratebAccum = np.append(ratebAccum,rate) 
+        elif color == 'r' : 
+            marker = '^' 
+            avgrAccum = np.append(avgrAccum,avg) 
+            raterAccum = np.append(raterAccum,rate) 
+        elif color == 'k' : 
+            marker = '^' 
+            avgkAccum = np.append(avgkAccum,avg) 
+            ratekAccum = np.append(ratekAccum,rate) 
+    
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        #ax.annotate(mol, (rate, avg) ) 
+    
+        print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
+    
+    try : 
+        slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
+        x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
+        y = slope * np.log(x) + intercept 
+        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+    except ValueError : 
+        print "No data found for blue" 
+    
+#    try : 
+#        slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
+#        x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
+#        y = slope * np.log(x) + intercept 
+#        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#    except ValueError : 
+#        print "No data found for red" 
+#    
+#    try : 
+#        slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
+#        x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
+#        y = slope * np.log(x) + intercept 
+#        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+#    except ValueError : 
+#        print "No data found for black" 
+    
+    ax.legend(loc=4) 
+    ax.set_xscale('log') 
+    
+    fig.savefig('figures/rate_v_scount_%s.png'%dist,format='png') 
+sys.exit() 
+
+for dist in ['245', '3', '4', '5', '6'] : 
+    fig, ax = plt.subplots(1,1) 
+    fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
+    fig.text(0.5,0.04, r"Rate (min$^{-1}$)", ha='center', va='center') 
+    fig.text(0.03,0.5, r"Num waters within %s A of Q61 s.c. and %s A of O2G"%(dist, dist) , ha='center', va='center',rotation='vertical') 
+    
+    avgbAccum, ratebAccum = [], [] 
+    avgrAccum, raterAccum = [], [] 
+    avgkAccum, ratekAccum = [], [] 
+    for mol in molecList : 
+        molec = 'RasRalC18CNC_Q61%s'%mol
+        name = "Q61%s"%mol 
+        color, marker = plotKeys[mol] 
+        datafile = '%s/Analysis/boltzmann/O2G_size_%s.weighted.out'%(molec,dist) 
         #print datafile
     
         rate, error = nameToExpRate[name] 
@@ -140,8 +221,9 @@ for dist in ['245', '3', '4', '5', '6'] :
     ax.legend(loc=4) 
     ax.set_xscale('log') 
     
-    fig.savefig('figures/rate_v_scount_%s.png'%dist,format='png') 
+    fig.savefig('figures/rate_v_O2G_scount_%s.png'%dist,format='png') 
     plt.close() 
+sys.exit() 
 
 for dist in ['245', '3', '4', '5', '6'] : 
     fig, ax = plt.subplots(1,1) 
