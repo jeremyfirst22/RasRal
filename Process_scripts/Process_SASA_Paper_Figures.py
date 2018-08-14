@@ -76,10 +76,11 @@ with open('Plotting_files/ColorMarkerKeys.txt') as f :
 
 
 fig, axarr = plt.subplots(2,2,figsize=[6,5]) 
-fig.subplots_adjust(wspace=0.00,hspace=0.00,top=0.95,bottom=0.08,left=0.10,right=0.95) 
+fig.subplots_adjust(wspace=0.00,hspace=0.00,top=0.95,bottom=0.10,left=0.10,right=0.95) 
 fig.text(0.313,0.035, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
-fig.text(0.738,0.035, r"Initial rate ($\mu$M min$^{-1}$)", ha='center', va='center') 
-fig.text(0.03,0.5, r"SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
+fig.text(0.738,0.035, r"Initial rate ($\muup$M min$^{-1}$)", ha='center', va='center') 
+fig.text(0.03,0.738, r"Polar atom SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
+fig.text(0.03,0.313, r"Side chain SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
 #fig.text(0.03,0.27, r"Sidechain", ha='center', va='center',rotation='vertical') 
 #fig.text(0.03,0.75, r"Polar atom", ha='center', va='center',rotation='vertical') 
 
@@ -116,7 +117,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax1.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3) 
+    ax1.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color) 
     #ax.scatter(peak, avg) 
     #ax1.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -164,7 +165,7 @@ for mol in molecList :
         peakAccum = np.append(peakAccum,peak) 
         marker = 'o'
 
-    ax2.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3) 
+    ax2.errorbar(peak, avg,xerr=error, yerr=std,marker=marker,color=color) 
     #ax.scatter(peak, avg) 
     #ax2.annotate(mol, (peak+0.02, avg+3) ) 
 
@@ -221,7 +222,7 @@ for mol in molecList :
         #avgkAccum = np.append(avgkAccum,avg)
         #ratekAccum = np.append(ratekAccum,rate)
 
-    ax3.errorbar(rate, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3)
+    ax3.errorbar(rate, avg,xerr=error, yerr=std,marker=marker,color=color) 
     #ax.scatter(rate, avg)
     #ax3.annotate(mol, (rate, avg+1) )
 
@@ -301,7 +302,7 @@ for mol in molecList :
         avgkAccum = np.append(avgkAccum,avg)
         ratekAccum = np.append(ratekAccum,rate)
 
-    ax4.errorbar(rate, avg,xerr=error, yerr=std,marker=marker,color=color,capsize=3)
+    ax4.errorbar(rate, avg,xerr=error, yerr=std,marker=marker,color=color) 
     #ax.scatter(rate, avg)
     #ax4.annotate(mol, (rate, avg+1) )
 

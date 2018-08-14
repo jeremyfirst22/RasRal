@@ -80,10 +80,10 @@ with open(exp_data2) as f :
             value = [float(line.split()[1]), float(line.split()[2])]
             nameToExpPeak[key] = value 
 
-fig, ax = plt.subplots(1,1) 
-fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
-fig.text(0.5,0.04, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
-fig.text(0.03,0.5, r"Initial rate ($\mu$M min$^{-1}$)", ha='center', va='center',rotation='vertical') 
+fig, ax = plt.subplots(1,1)
+fig.subplots_adjust(left=0.15,right=0.95, bottom=0.12,top=0.95)
+fig.text(0.55,0.04, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
+fig.text(0.03,0.535, r"Initial rate ($\muup$M min$^{-1}$)", ha='center', va='center',rotation='vertical') 
 
 avgbAccum, ratebAccum = [], [] 
 avgrAccum, raterAccum = [], [] 
@@ -101,13 +101,15 @@ for mol in molecList :
         avgbAccum = np.append(avgbAccum,peak) 
         ratebAccum = np.append(ratebAccum,rate) 
     elif color == 'r' : 
+        marker = '^'
         avgrAccum = np.append(avgrAccum,peak) 
         raterAccum = np.append(raterAccum,rate) 
     elif color == 'k' : 
+        marker = '^'
         avgkAccum = np.append(avgkAccum,peak) 
         ratekAccum = np.append(ratekAccum,rate) 
 
-    ax.errorbar(peak,rate,xerr=error2, yerr=error,marker=marker,color=color, capsize=3) 
+    ax.errorbar(peak,rate,xerr=error2, yerr=error,marker=marker,color=color) 
     #ax.annotate(mol, (peak+0.03, rate+0.001) ) 
 
 def normDist(x, a, b, c, d) : 

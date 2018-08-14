@@ -67,10 +67,10 @@ def logFit(x, a, b) :
 
 for dist in ['245', '3', '4', '5', '6'] : 
     fig, ax = plt.subplots(1,1) 
-    fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.15,right=0.95) 
-    fig.text(0.5,0.04, r"Initial rate ($\mu$M min$^{-1}$)", ha='center', va='center') 
+    fig.subplots_adjust(left=0.15,right=0.95, bottom=0.12,top=0.95) 
+    fig.text(0.55,0.04, r"Initial rate ($\muup$M min$^{-1}$)", ha='center', va='center') 
     #fig.text(0.03,0.5, r"Num waters within %s A of Q61 s.c. and %s A of O1G"%(dist, dist) , ha='center', va='center',rotation='vertical') 
-    fig.text(0.03,0.5, r"Average number of waters", ha='center', va='center',rotation='vertical') 
+    fig.text(0.03,0.535, r"Average number of waters", ha='center', va='center',rotation='vertical') 
     
     avgbAccum, ratebAccum = [], [] 
     avgrAccum, raterAccum = [], [] 
@@ -111,7 +111,7 @@ for dist in ['245', '3', '4', '5', '6'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         #ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -189,7 +189,7 @@ for dist in ['245', '3', '4', '5', '6'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -268,7 +268,7 @@ for dist in ['245', '3', '4', '5', '6'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -346,7 +346,7 @@ for dist in ['245', '3', '4', '5', '6'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -427,7 +427,7 @@ for dist in ['245', '3', '4', '5'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -505,7 +505,7 @@ for dist in ['245', '3', '4', '5'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -584,7 +584,7 @@ for dist in ['245', '3', '4', '5'] :
             avgkAccum = np.append(avgkAccum,avg) 
             ratekAccum = np.append(ratekAccum,rate) 
     
-        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+        ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
         ax.annotate(mol, (rate, avg) ) 
     
         print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -664,7 +664,7 @@ for mol in molecList :
         avgkAccum = np.append(avgkAccum,avg) 
         ratekAccum = np.append(ratekAccum,rate) 
 
-    ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+    ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
     ax.annotate(mol, (rate, avg) ) 
 
     print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
@@ -732,7 +732,7 @@ for mol in molecList :
         avgkAccum = np.append(avgkAccum,avg) 
         ratekAccum = np.append(ratekAccum,rate) 
 
-    ax.errorbar(rate, avg,xerr=error, marker=marker,color=color,capsize=3) 
+    ax.errorbar(rate, avg,xerr=error, marker=marker,color=color) 
     ax.annotate(mol, (rate, avg) ) 
 
     print "Q61%s\t%3.2f\t%.2f"%(mol,avg,std) 
