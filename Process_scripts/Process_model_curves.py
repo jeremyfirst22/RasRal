@@ -34,29 +34,31 @@ y3    = data[:,5]
 yerr3 = data[:,6] 
 
 fig, ax = plt.subplots(1,1) 
-fig.subplots_adjust(wspace=0.1,hspace=0.35,left=0.12,right=0.95, bottom=0.15) 
-fig.text(0.5,0.04, r"Time (min)", ha='center', va='center') 
-fig.text(0.03,0.5, r"[ $\rm{P_i}$ ] ($\rm{\mu M})$", ha='center', va='center',rotation='vertical') 
+fig.subplots_adjust(left=0.15,right=0.95, bottom=0.12,top=0.95) 
+fig.text(0.55,0.04, r"Time (min)", ha='center', va='center') 
+fig.text(0.03,0.535, r"[ $\rm{P_i}$ ] ($\rm{\muup M})$", ha='center', va='center',rotation='vertical') 
 
-ax.scatter(x, y1, marker='o', color='k',label=r"WT Ras") 
-ax.scatter(x, y2, marker='o', color='g',label=r"Ras Q61G") 
-ax.scatter(x, y3, marker='o', color='b',label=r"Ras Q61H") 
+ax.scatter(x, y1, marker='o', color='b',label=r"WT Ras") 
+ax.scatter(x, y2, marker='o', color='k',label=r"RasQ61G") 
+ax.scatter(x, y3, marker='o', color='r',label=r"RasQ61K") 
 
-ax.errorbar(x, y1, yerr=yerr1 , marker='o', color='k' ,capsize=3, ls = 'None') 
-ax.errorbar(x, y2, yerr=yerr2 , marker='o', color='g' ,capsize=3, ls = 'None') 
-ax.errorbar(x, y3, yerr=yerr3 , marker='o', color='b' ,capsize=3, ls = 'None') 
+ax.errorbar(x, y1, yerr=yerr1 , marker='o', color='b', ls = 'None') 
+ax.errorbar(x, y2, yerr=yerr2 , marker='o', color='k', ls = 'None') 
+ax.errorbar(x, y3, yerr=yerr3 , marker='o', color='r', ls = 'None') 
 
 slope, intercept, r_value, p_value, std_error = linregress(x[-5:], y1[-5:],) 
-ax.plot(x[-5:], x[-5:]*slope + intercept, ls='--', c='k') 
-
-slope, intercept, r_value, p_value, std_error = linregress(x[-5:], y2[-5:],) 
-ax.plot(x[-5:], x[-5:]*slope + intercept, ls='--', c='g') 
-
-slope, intercept, r_value, p_value, std_error = linregress(x[-5:], y3[-5:],) 
 ax.plot(x[-5:], x[-5:]*slope + intercept, ls='--', c='b') 
 
-ax.legend(loc=2) #,fontsize='xx-small') 
+slope, intercept, r_value, p_value, std_error = linregress(x[-5:], y2[-5:],) 
+ax.plot(x[-5:], x[-5:]*slope + intercept, ls='--', c='k') 
+
+slope, intercept, r_value, p_value, std_error = linregress(x[-5:], y3[-5:],) 
+ax.plot(x[-5:], x[-5:]*slope + intercept, ls='--', c='r') 
+
+ax.legend(loc=2)#,fontsize=9) #,fontsize='xx-small') 
 #ax.set_xscale('log') 
+
+ax.set_ylim([-1.5,19.5]) 
 
 fig.savefig('figures/modelCurvesFigure.png',format='png') 
 plt.close() 
