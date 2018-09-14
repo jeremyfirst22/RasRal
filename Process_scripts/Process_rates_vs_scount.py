@@ -120,7 +120,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -128,7 +128,7 @@ for dist in ['245', '3', '4', '5', '6'] :
 #        slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
 #        x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
 #        y = slope * np.log(x) + intercept 
-#        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#        ax.plot(x, y, label = "r = %.2f"%r_value,color='r')
 #    except ValueError : 
 #        print "No data found for red" 
 #    
@@ -136,7 +136,7 @@ for dist in ['245', '3', '4', '5', '6'] :
 #        slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
 #        x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
 #        y = slope * np.log(x) + intercept 
-#        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+#        ax.plot(x, y, label = "r = %.2f"%r_value,color='k')
 #    except ValueError : 
 #        print "No data found for black" 
     
@@ -198,7 +198,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -206,7 +206,7 @@ for dist in ['245', '3', '4', '5', '6'] :
 #        slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
 #        x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
 #        y = slope * np.log(x) + intercept 
-#        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+#        ax.plot(x, y, label = "r = %.2f"%r_value,color='r')
 #    except ValueError : 
 #        print "No data found for red" 
 #    
@@ -214,7 +214,7 @@ for dist in ['245', '3', '4', '5', '6'] :
 #        slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
 #        x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
 #        y = slope * np.log(x) + intercept 
-#        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+#        ax.plot(x, y, label = "r = %.2f"%r_value,color='k')
 #    except ValueError : 
 #        print "No data found for black" 
     
@@ -277,7 +277,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -285,7 +285,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
         x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='r')
     except ValueError : 
         print "No data found for red" 
     
@@ -293,7 +293,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
         x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='k')
     except ValueError : 
         print "No data found for black" 
     
@@ -355,7 +355,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -363,7 +363,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
         x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='r')
     except ValueError : 
         print "No data found for red" 
     
@@ -371,7 +371,7 @@ for dist in ['245', '3', '4', '5', '6'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
         x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='k')
     except ValueError : 
         print "No data found for black" 
     
@@ -436,7 +436,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -444,7 +444,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
         x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='r')
     except ValueError : 
         print "No data found for red" 
     
@@ -452,7 +452,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
         x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='k')
     except ValueError : 
         print "No data found for black" 
     
@@ -514,7 +514,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -522,7 +522,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
         x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='r')
     except ValueError : 
         print "No data found for red" 
     
@@ -530,7 +530,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
         x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='k')
     except ValueError : 
         print "No data found for black" 
     
@@ -593,7 +593,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratebAccum), avgbAccum) 
         x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
     except ValueError : 
         print "No data found for blue" 
     
@@ -601,7 +601,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(raterAccum), avgrAccum) 
         x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+        ax.plot(x, y, label = "$r = %.2f$"%r_value,color='r')
     except ValueError : 
         print "No data found for red" 
     
@@ -609,7 +609,7 @@ for dist in ['245', '3', '4', '5'] :
         slope, intercept, r_value, p_value, std_error = linregress(np.log(ratekAccum), avgkAccum) 
         x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
         y = slope * np.log(x) + intercept 
-        ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+        ax.plot(x, y, label = "$r = %.2$f"%r_value,color='k')
     except ValueError : 
         print "No data found for black" 
     
@@ -672,17 +672,17 @@ for mol in molecList :
 slope, intercept, r_value, p_value, std_error = linregress(ratebAccum, avgbAccum) 
 x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100) 
 y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='b')
+ax.plot(x, y, label = "$r = %.2f$"%r_value,color='b')
 
 slope, intercept, r_value, p_value, std_error = linregress(raterAccum, avgrAccum) 
 x = np.linspace(np.min(raterAccum), np.max(raterAccum),100) 
 y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='r')
+ax.plot(x, y, label = "$r = %.2f$"%r_value,color='r')
 
 slope, intercept, r_value, p_value, std_error = linregress(ratekAccum, avgkAccum) 
 x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100) 
 y = slope * x + intercept 
-ax.plot(x, y, label = "r = %.3f"%r_value,color='k')
+ax.plot(x, y, label = "$r = %.2f$"%r_value,color='k')
 
 ax.legend(loc=4) 
 ax.set_xscale('log') 
@@ -741,19 +741,19 @@ popt, pcov = curve_fit(logFit, ratebAccum, avgbAccum, p0=(1, -1, ))
 p1, p2, = popt[:]
 x = np.linspace(np.min(ratebAccum), np.max(ratebAccum),100)
 y = logFit(x, p1, p2)
-ax.plot(x,y,color='b', label = "E = %.3f"%np.sum(np.sqrt(np.diag(pcov) ))  )
+ax.plot(x,y,color='b', label = "E = %.2f"%np.sum(np.sqrt(np.diag(pcov) ))  )
 
 popt, pcov = curve_fit(logFit, raterAccum, avgrAccum, p0=(1, -1, ))
 p1, p2, = popt[:]
 x = np.linspace(np.min(raterAccum), np.max(raterAccum),100)
 y = logFit(x, p1, p2)
-ax.plot(x,y,color='r', label = "E = %.3f"%np.sum(np.sqrt(np.diag(pcov) ))  )
+ax.plot(x,y,color='r', label = "E = %.2f"%np.sum(np.sqrt(np.diag(pcov) ))  )
 
 popt, pcov = curve_fit(logFit, ratekAccum, avgkAccum, p0=(1, -1, ))
 p1, p2, = popt[:]
 x = np.linspace(np.min(ratekAccum), np.max(ratekAccum),100)
 y = logFit(x, p1, p2)
-ax.plot(x,y,color='k', label = "E = %.3f"%np.sum(np.sqrt(np.diag(pcov) ))  )
+ax.plot(x,y,color='k', label = "E = %.2f"%np.sum(np.sqrt(np.diag(pcov) ))  )
 
 ax.legend(loc=4) 
 ax.set_xscale('log') 
