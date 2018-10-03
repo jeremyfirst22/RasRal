@@ -133,6 +133,9 @@ analysis_windows(){
         scount_2 $angle 
         force_nitrile $angle 
         g12_os3_dist $angle 
+        sasa_of_probe $angle
+        scount_of_probe $angle
+        hbond $angle 
     done
     wham
     boltzmann_weight
@@ -717,6 +720,8 @@ boltzmann_weight(){
         || [[ ! -f boltzmann/size_polar_5.weighted.out && -f scount_polar/size.330.xvg ]] \
         || [[ ! -f boltzmann/davids.weighted.out && -f polar_sasa/davids.330.xvg ]] \
         || [[ ! -f boltzmann/polar.weighted.out && -f polar_sasa/polar.330.xvg ]] \
+        || ! -f boltzmann/cnc_area.weighted.out \
+        || ! -f boltzmann/cnc_scount.weighted.out \
         && [ -f $FORCE_TOOLS/boltzmann_weight ]  ; then 
         create_dir boltzmann
         cd boltzmann ; clean 
@@ -1619,6 +1624,60 @@ boltzmann_weight(){
             rm *.xvg 
         fi 
         check g12_distave.weighted.out 
+
+        if [ ! -f cnc_area.weighted.out ] ; then 
+            if [ -f cnc_area.boltzmann.inp ] ; then rm cnc_area.boltzmann.inp ; fi 
+
+            i=0
+            touch cnc_area.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../sasa_of_probe/area.$window.xvg cnc_area.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   cnc_area.$window.xvg" >> cnc_area.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l cnc_area.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o cnc_area.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check cnc_area.weighted.out 
+
+        if [ ! -f cnc_scount.weighted.out ] ; then 
+            if [ -f cnc_scount.boltzmann.inp ] ; then rm cnc_scount.boltzmann.inp ; fi 
+
+            i=0
+            touch cnc_scount.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../scount_of_probe/size.$window.xvg cnc_scount.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   cnc_scount.$window.xvg" >> cnc_scount.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l cnc_scount.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o cnc_scount.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check cnc_scount.weighted.out 
+
+        if [ ! -f frame_hb.weighted.out ] ; then 
+            if [ -f frame_hb.boltzmann.inp ] ; then rm frame_hb.boltzmann.inp ; fi 
+
+            i=0
+            touch frame_hb.boltzmann.inp 
+            for window in `seq 0 $angBinDist 359` ; do 
+                clean_xvg ../hbond/frame_hb.$window.xvg frame_hb.$window.xvg 
+                echo "../wham/$MOLEC.output.$i.bin   frame_hb.$window.xvg" >> frame_hb.boltzmann.inp 
+                ((i++)) 
+            done 
+
+            $FORCE_TOOLS/boltzmann_weight -l frame_hb.boltzmann.inp \
+                -p ../wham/$MOLEC.output.prob \
+                -o frame_hb.weighted.out >> $logFile 2>> $errFile 
+            rm *.xvg 
+        fi 
+        check frame_hb.weighted.out 
 
         #check endFile.$window.xvg
         clean 
@@ -2721,6 +2780,161 @@ g12_os3_dist(){
 
         clean 
         printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+sasa_of_probe(){ 
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "SASA CNC"
+    if [[ ! -f sasa_of_probe/area.$window.xvg || ! -f sasa_of_probe/sidechain.$window.xvg || ! -f sasa_of_probe/isolated.$window.xvg ]]  ; then 
+        create_dir sasa_of_probe
+        cd sasa_of_probe
+
+        if [ ! -f area.$window.xvg ] ; then 
+            gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                -s ../../Production/$window/$MOLEC.$window.tpr \
+                -surface 'Protein' \
+                -output "resname CNC" \
+                -ndots 240 \
+                -o area.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check area.$window.xvg 
+
+        if [ ! -f sidechain.$window.xvg ] ; then 
+            gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                -s ../../Production/$window/$MOLEC.$window.tpr \
+                -surface 'Protein' \
+                -output "group Sidechain and resname CNC" \
+                -ndots 240 \
+                -o sidechain.$window.xvg >> $logFile 2>> $errFile 
+        fi
+        check sidechain.$window.xvg 
+
+        if [ ! -f isolated.$window.xvg ] ; then 
+            if [ ! -f residue.ndx ] ; then 
+                gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                    -select "group \"SideChain\" and resname CNC" \
+                    -on residue.ndx >> $logFile 2>> $errFile 
+            fi 
+            echo '0' | gmx sasa -f ../../Production/$window/$MOLEC.$window.xtc \
+                -s ../../Production/$window/$MOLEC.$window.tpr \
+                -n residue.ndx \
+                -ndots 240 \
+                -o isolated.$window.xvg >> $logFile 2>> $errFile 
+        fi
+        check isolated.$window.xvg 
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+scount_of_probe(){
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "scount CNC" 
+    if [[ ! -f scount_of_probe/size.$window.xvg ]] ; then 
+        create_dir scount_of_probe
+        cd scount_of_probe
+
+        if [ ! -f size.$window.xvg ] ; then 
+            gmx select -s ../../Production/$window/$MOLEC.$window.tpr \
+                -f ../../Production/$window/$MOLEC.$window.xtc \
+                -select "group \"Water\" and same residue as ((within 0.5 of group \"SideChain\" and resname CNC))" \
+                -os size.$window.xvg >> $logFile 2>> $errFile 
+        fi 
+        check size.$window.xvg
+
+        clean 
+        printf "Success\n" 
+        cd ../
+    else 
+        printf "Skipped\n"
+        fi 
+}
+
+hbond(){
+    ##Call from analysis_windows()
+    if [ -z $1 ] ; then 
+        echo "ERROR: Argument missing." 
+        echo "Usage: $0 < window (degrees) > "
+    fi 
+    window=$1
+
+    printf "\t\t\t%10s........................" "HBond" 
+    if [ ! -f hbond/geometry.$window.xvg ]  ; then 
+        create_dir hbond
+        cd hbond
+
+        if [ ! -f v4.tpr ] ; then 
+            cp ../../Production/$window/equilibrated_starting.$window.gro starting.gro 
+            cp ../../Production/$window/$MOLEC.$window.top starting.top 
+            cp ../../Production/$window/*.itp . 
+
+            grompp -f $MDP/vac_md.mdp \
+                -c starting.gro \
+                -p starting.top \
+                -maxwarn 3 \
+                -o v4.tpr >> $logFile 2>> $errFile 
+            check v4.tpr 
+
+            echo "r CNC & a NE" > selection.dat 
+            echo "r SOL" >> selection.dat 
+            echo "q" >> selection.dat 
+
+            touch empty.ndx 
+            cat selection.dat | gmx make_ndx -f starting.gro \
+                -n empty.ndx \
+                -o index.ndx >> $logFile 2>> $errFile 
+            check index.ndx 
+        fi 
+
+        echo '0 1 0' | gmx hbond -f ../../Production/$window/$MOLEC.$window.xtc \
+            -s ../../Production/$window/$MOLEC.$window.tpr \
+            -n index.ndx \
+            -shell 1.0 \
+            -num hbnum.$window.xvg \
+            -dist hbdist.$window.xvg \
+            -ang hbang.$window.xvg >> $logFile 2>> $errFile 
+        check hbdist.$window.xvg hbang.$window.xvg 
+
+        CD=`grep CNC starting.gro | grep CD | awk '{print $3}'`
+        NE=`grep CNC starting.gro | grep NE | awk '{print $3}'`
+        source /usr/local/gromacs/bin/GMXRC
+        g_nitrile_hbond -f ../../Production/$window/$MOLEC.$window.xtc \
+            -s v4.tpr \
+            -select 'not resname CNC and (same residue as within 0.5 of resname CNC and name NE)' \
+            -a1 $CD \
+            -a2 $NE \
+            -op persistent.$window.xvg \
+            -or geometry.$window.xvg \
+            -oa hb_count.$window.xvg \
+            -onwr nw_geometry.$window.xvg \
+            -o frame_hb.$window.xvg >> $logFile 2>> $errFile 
+        #check frame_hb.$window.xvg geometry.$window.xvg persistent.$window.xvg 
+
+        cat geometry.$window.xvg | grep -v "^[#@]" | awk '{print $4}' > clean_theta1.$window.dat 
+
+        /Users/jfirst/normal_distribution/tiltAngle -f clean_theta1.$window.dat -o theta1.$window.his -g theta1.$window.gaus -p theta1.$window.poly -n 10 -t 3
+
+
+        printf "Success\n" 
+        clean
         cd ../
     else 
         printf "Skipped\n"
