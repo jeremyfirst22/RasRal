@@ -75,16 +75,25 @@ with open('Plotting_files/ColorMarkerKeys.txt') as f :
             plotKeys[key] = value 
 
 
-fig, axarr = plt.subplots(2,2,figsize=[6,5]) 
-fig.subplots_adjust(wspace=0.00,hspace=0.00,top=0.95,bottom=0.10,left=0.10,right=0.95) 
-fig.text(0.313,0.035, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
-fig.text(0.738,0.035, r"Initial rate ($\muup$M min$^{-1}$)", ha='center', va='center') 
-fig.text(0.03,0.738, r"Polar atom SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
-fig.text(0.03,0.313, r"Side chain SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
+fig, axarr = plt.subplots(1,2,figsize=[6,2.5]) 
+fig.subplots_adjust(wspace=0.20,hspace=0.00,top=0.95,bottom=0.15,left=0.08,right=0.98) 
+fig.text(0.280,0.050, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
+fig.text(0.780,0.050, r"Initial rate ($\muup$M min$^{-1}$)", ha='center', va='center') 
+fig.text(0.03,0.550, r"Polar atom SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
+fig.text(0.515,0.550, r"Side chain SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
 #fig.text(0.03,0.27, r"Sidechain", ha='center', va='center',rotation='vertical') 
 #fig.text(0.03,0.75, r"Polar atom", ha='center', va='center',rotation='vertical') 
 
-ax1 = axarr[0,0]
+fig2, axarr2 = plt.subplots(1,2,figsize=[6,2.5]) 
+fig2.subplots_adjust(wspace=0.20,hspace=0.00,top=0.95,bottom=0.15,left=0.08,right=0.98) 
+fig2.text(0.780,0.050, r"Absorption frequency (cm$^{-1}$)", ha='center', va='center') 
+fig2.text(0.280,0.050, r"Initial rate ($\muup$M min$^{-1}$)", ha='center', va='center') 
+fig2.text(0.030,0.550, r"Polar atom SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
+fig2.text(0.515,0.550, r"Side chain SASA ($\rm{\AA}^2$)", ha='center', va='center',rotation='vertical') 
+#fig.text(0.03,0.27, r"Sidechain", ha='center', va='center',rotation='vertical') 
+#fig.text(0.03,0.75, r"Polar atom", ha='center', va='center',rotation='vertical') 
+
+ax1 = axarr[0] 
 avgAccum, peakAccum = [], [] 
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
@@ -132,7 +141,7 @@ ax1.set_xlim([2161.8,2165.2])
 #ax1.text(0.9,0.9,'A') 
 #ax1.text(0.05,0.95,"A",transform=ax1.transAxes,ha='left',va='top') 
 
-ax2 = axarr[1,0]
+ax2 = axarr2[1]
 avgAccum, peakAccum = [], [] 
 for mol in molecList : 
     molec = 'RasRalC18CNC_Q61%s'%mol
@@ -179,7 +188,7 @@ ax2.legend(loc=3)
 #ax2.text(0.05,0.95,"B",transform=ax2.transAxes,ha='left',va='top') 
 ax2.set_xlim([2161.8,2165.2]) 
 
-ax3 = axarr[0,1]
+ax3 = axarr2[0]
 avgbAccum, ratebAccum = [], []
 avgrAccum, raterAccum = [], []
 avgkAccum, ratekAccum = [], []
@@ -255,11 +264,11 @@ except ValueError :
     print "No black"
 
 ax3.legend(loc=1)
-ax3.axes.get_yaxis().set_ticklabels([]) 
+#ax3.axes.get_yaxis().set_ticklabels([]) 
 #ax3.text(0.05,0.95,"C",transform=ax3.transAxes,ha='left',va='top') 
 ax3.set_xscale('log')
 
-ax4 = axarr[1,1]
+ax4 = axarr[1] 
 avgbAccum, ratebAccum = [], []
 avgrAccum, raterAccum = [], []
 avgkAccum, ratekAccum = [], []
@@ -335,13 +344,14 @@ except ValueError :
 #    print "No black"
 
 ax4.legend(loc=4)
-ax4.axes.get_yaxis().set_ticklabels([]) 
+#ax4.axes.get_yaxis().set_ticklabels([]) 
 #ax4.set_xlim([0.9*10**-3,1.3*10**-1]) 
 #ax4.text(0.05,0.95,"D",transform=ax4.transAxes,ha='left',va='top') 
 ax4.set_xscale('log')
 
 
 fig.savefig('figures/paper_sasa_figure.png',format='png') 
+fig2.savefig('figures/paper_sasa_si_figure.png',format='png') 
 plt.close() 
 
 
